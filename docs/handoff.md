@@ -43,16 +43,21 @@
 - API 設計が完了（イシュー #12）：API 設計書 版1.0（A-01〜A-18）
 - AWS 構成設計が完了（イシュー #14）：AWS 構成設計書 版1.0。**基本設計はこれで全部終わり**
 - 詳細設計が完了（イシュー #16）：詳細設計書 版1.0。照合順序を `utf8mb4_ja_0900_as_cs` に、Node.js を 24 に変更（MySQL・Amazon Linux で確かめた結果）
-- コードはまだない
+- 環境構築が完了（イシュー #18）：開発用の MySQL、Laravel 13・Next.js 16 のひな形、テストとチェックの道具
 
-## 次にやること：環境構築（詳細設計書 3章）
+## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
-1. パソコンの準備（ユーザー）：Laravel Herd で PHP 8.5 を選ぶ（`intl`・`gd` が有効か確認）、fnm を入れて Node.js 24 を入れる、Windows のユーザー環境変数 `RECIPE_DB_PASSWORD` を登録する
-2. `compose.yaml`（MySQL 8.4・3308・`utf8mb4_ja_0900_as_cs`）
-3. Laravel 13 のひな形（`backend/`）：Sanctum・Pest・Pint・Larastan
-4. Next.js 16 のひな形（`frontend/`）：Mantine・TanStack Query・Biome・Vitest・Playwright、`/api` の転送
-5. GitHub Actions（`ci.yml`）と、main の保護に「CI の成功」を足す
-6. その後、機能ごとに実装（イシュー → ブランチ → PR）
+- PHP は **`php85`** を直接使う。Herd 全体の PHP は 8.1 のまま（ほかのサイト multilogin・umarche が使う）。`herd php` は Herd 側の問題で動かない。Composer は `php85 "%USERPROFILE%\.config\herd\bin\composer.phar"`。PowerShell から `.bat` に `^` を渡すと消えるので、版の指定は `composer.json` を直接書く
+- `backend/` は Herd のサイト `recipe-box.test`（PHP 8.5 に固定）として登録済み。使っていないが害はない
+- Node.js は fnm。`frontend/.node-version` に 24。fnm の既定は system（前のアプリの Node.js 26）。Claude のシェルでは `fnm exec --using=24 npm.cmd ...`
+- DB のパスワードは Windows のユーザー環境変数 `RECIPE_DB_PASSWORD`。前のアプリ用の `DB_PASSWORD`（ユーザー環境変数）があるので、`config/database.php` は `RECIPE_DB_PASSWORD` を先に読む。`php artisan serve` に渡すため `AppServiceProvider` で `ServeCommand::$passthroughVariables` に足した
+- Claude は `.env` を読めない（`C:\dev\Raise_Tech\.claude\settings.json` の deny）。`.env.example` は読める
+- Claude の権限ではファイルの削除（`rm`・`Remove-Item`）ができない。Laravel のひな形に残っている画面用のファイル（`backend/package.json`・`vite.config.js`・`resources/css`・`resources/js`）と、Next.js の見本の画像（`frontend/public/*.svg`）は使わない。消すかどうかはユーザーと相談
+
+## 次にやること
+
+1. GitHub Actions（`ci.yml`：backend・frontend・e2e）と、main の保護に「CI の成功」を足す
+2. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：テーブルとシーダー（カテゴリ12個）→ 持ち主の作成コマンドとログイン（S-01・F-61）→ レシピの登録・詳細 → 一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
 
 ## 構築の前に確かめること
 
