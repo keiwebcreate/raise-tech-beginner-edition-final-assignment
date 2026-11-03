@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>S-07 エラー｜モックアップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
   .err { text-align: center; padding: 48px 16px; }
-  .err .code { font-size: 56px; font-weight: 800; color: var(--primary); margin: 0; line-height: 1.2; }
+  .err .code { font-family: var(--font-display); font-size: 64px; font-weight: 700; color: var(--mikan-deep); margin: 0; line-height: 1.1; }
   .err h1 { font-size: 20px; margin: 8px 0; }
-  .err p { color: var(--text-dim); }
+  .err p { color: var(--ink-dim); }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
 </style>
@@ -19,28 +22,28 @@
 
 <header class="header">
   <div class="header-inner">
-    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <a class="logo" href="list.html"><span class="logo-mark" aria-hidden="true"></span>Recipe Box</a>
     <nav class="header-nav">
       <a class="btn btn-primary" href="form.html">＋ レシピを追加</a>
-      <a class="btn btn-subtle" href="settings.html">⚙ 設定</a>
+      <a class="btn btn-subtle" href="settings.html">設定</a>
     </nav>
     <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
   </div>
   <div class="mobile-menu">
     <a href="form.html">＋ レシピを追加</a>
-    <a href="settings.html">⚙ 設定</a>
+    <a href="settings.html">設定</a>
   </div>
 </header>
 
 <main class="container">
   <div class="pair">
-    <section class="card err">
+    <section class="sheet err">
       <p class="code">404</p>
       <h1>ページが見つかりません</h1>
       <p>レシピが削除されたか、URL が間違っている可能性があります。</p>
       <a class="btn btn-primary" href="list.html">レシピ一覧へ</a>
     </section>
-    <section class="card err">
+    <section class="sheet err">
       <p class="code">500</p>
       <h1>エラーが起きました</h1>
       <p>時間をおいて、もう一度お試しください。</p>

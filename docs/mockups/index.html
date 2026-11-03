@@ -4,20 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>モックアップの一覧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .box { padding: 20px; margin-bottom: 20px; }
+  .box { padding: 24px 28px; margin-bottom: 20px; }
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
   th { white-space: nowrap; }
   ul { padding-left: 20px; }
 </style>
 </head>
 <body>
 <main class="container narrow">
-  <h1 class="page-title">🍳 レシピ管理アプリ：モックアップ</h1>
+  <h1 class="page-title">レシピ管理アプリ：モックアップ</h1>
 
-  <section class="card box">
+  <section class="sheet box">
     <p style="margin-top:0">画面の見た目を確かめるための試作です。データは見本で、保存などは動きません。詳しくは <code>docs/screen-design.md</code>（画面設計書）を参照。</p>
     <table>
       <tr><th>ID</th><th>画面</th></tr>
@@ -31,7 +34,7 @@
     </table>
   </section>
 
-  <section class="card box">
+  <section class="sheet box">
     <h2 class="section-title">確かめ方</h2>
     <ul>
       <li>スマホの見た目：ブラウザで F12 → 端末のアイコン（Ctrl＋Shift＋M）で幅を 320px などに変える</li>

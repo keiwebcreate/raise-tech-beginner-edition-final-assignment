@@ -1,42 +1,55 @@
 /*
-  モックアップ用の共通スタイル。
-  本番は Mantine ＋ CSS Modules で作る。ここでは見た目の確認のため、
-  Mantine の標準の色（orange・gray）と余白に近い値を手で書いている。
+  モックアップ用の共通スタイル（版1.1：frontend-design スキルで作り直し）
+  題材：自分だけの「台所のレシピノート」
+  本番は Mantine のテーマ（色・書体）＋ CSS Modules で同じ見た目にする。
+
+  色の名前
+    蜜柑 mikan   #F08300  メインの色（ボタン、選んでいる印）
+    藍墨 aizumi  #25323C  文字
+    まな板       #F4F5F1  背景
+    若菜 wakana  #4E8A3E  成功・「作った」記録
 */
 
 :root {
-  --primary: #fd7e14;          /* Mantine orange.6 */
-  --primary-hover: #e8590c;    /* orange.8 */
-  --primary-light: #fff4e6;    /* orange.0 */
-  --primary-text: #d9480f;     /* orange.9 */
-  --bg: #f8f9fa;
-  --surface: #ffffff;
-  --text: #212529;
-  --text-dim: #6c757d;
-  --border: #dee2e6;
-  --danger: #fa5252;
-  --danger-light: #fff5f5;
-  --success: #40c057;
-  --star: #fab005;
-  --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
-  --radius: 8px;
+  --mikan: #f08300;
+  --mikan-deep: #c96a00;      /* 白の上の大きな数字・リンク用（読みやすさのため濃く） */
+  --mikan-wash: #fdf0e0;      /* 選んでいるものの薄い背景 */
+  --ink: #25323c;             /* 藍墨：文字 */
+  --ink-dim: #5b6871;         /* 補足の文字 */
+  --board: #f4f5f1;           /* まな板：背景 */
+  --paper: #ffffff;           /* 紙：内容を載せる面 */
+  --rule: #dfe2db;            /* 区切りの線 */
+  --rule-strong: #c5cac1;
+  --wakana: #4e8a3e;          /* 若菜：成功 */
+  --wakana-wash: #e9f2e4;
+  --danger: #c4392d;
+  --danger-wash: #fbeceb;
+  --star: #e8a400;
+  --on-mikan: #25323c;        /* 蜜柑のボタンの上の文字 */
+  --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;
+  --radius: 6px;
+  --radius-lg: 12px;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #fd7e14;
-    --primary-hover: #ff922b;
-    --primary-light: #3a2a1c;
-    --primary-text: #ffa94d;
-    --bg: #1a1b1e;
-    --surface: #25262b;
-    --text: #e9ecef;
-    --text-dim: #a6a7ab;
-    --border: #373a40;
-    --danger: #ff6b6b;
-    --danger-light: #3b2224;
-    --shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    --mikan: #f08300;
+    --mikan-deep: #ff9d2e;
+    --mikan-wash: #3a2a17;
+    --ink: #e6e9e4;
+    --ink-dim: #a3adb3;
+    --board: #1b2228;
+    --paper: #222b32;
+    --rule: #34404a;
+    --rule-strong: #46535e;
+    --wakana: #7fbf6a;
+    --wakana-wash: #233325;
+    --danger: #f07167;
+    --danger-wash: #3a2425;
+    --star: #f5bd2e;
+    --on-mikan: #1b2228;
     color-scheme: dark;
   }
 }
@@ -45,31 +58,29 @@
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+  background: var(--board);
+  color: var(--ink);
+  font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--primary-text); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.35; }
+a { color: var(--mikan-deep); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--mikan); outline-offset: 2px; border-radius: 4px; }
 
-/* ---------- モックアップの案内帯 ---------- */
-.mock-note {
-  background: #343a40;
-  color: #fff;
-  font-size: 13px;
-  padding: 6px 16px;
-}
-.mock-note a { color: #ffd8a8; }
+/* ---------- モックアップの案内帯（本番にはない） ---------- */
+.mock-note { background: #2c2c2c; color: #fff; font-size: 13px; padding: 6px 16px; font-family: system-ui, sans-serif; }
+.mock-note a { color: #ffd08a; }
 
 /* ---------- ヘッダー ---------- */
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
 }
 .header-inner {
   max-width: 1200px;
@@ -80,33 +91,29 @@ a { color: var(--primary-text); }
   gap: 12px;
 }
 .logo {
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--text);
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin-right: auto;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: .02em;
+  color: var(--ink);
+  text-decoration: none;
   white-space: nowrap;
 }
-.logo span { color: var(--primary); }
-.header-nav { display: flex; align-items: center; gap: 8px; }
+/* ロゴの印：レシピノートの「しおり」 */
+.logo-mark { width: 14px; height: 20px; background: var(--mikan); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+.header-nav { display: flex; align-items: center; gap: 4px; }
 .header .burger { display: none; }
 .mobile-menu { display: none; }
 
 @media (max-width: 640px) {
   .header-nav { display: none; }
   .header .burger { display: inline-flex; }
-  .mobile-menu.open {
-    display: block;
-    border-top: 1px solid var(--border);
-    padding: 8px 16px 12px;
-  }
-  .mobile-menu a {
-    display: block;
-    padding: 10px 4px;
-    color: var(--text);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border);
-  }
+  .mobile-menu.open { display: block; border-top: 1px solid var(--rule); padding: 4px 16px 12px; }
+  .mobile-menu a { display: block; padding: 12px 4px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
 }
 
 /* ---------- ボタン ---------- */
@@ -115,102 +122,104 @@ a { color: var(--primary-text); }
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 36px;
+  min-height: 38px;
   padding: 0 14px;
   border-radius: var(--radius);
   border: 1px solid transparent;
-  font: inherit;
+  font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  color: var(--ink);
+  background: transparent;
 }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-hover); }
-.btn-light { background: var(--primary-light); color: var(--primary-text); }
-.btn-default { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-primary { background: var(--mikan); color: var(--on-mikan); }
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-default { border-color: var(--rule-strong); background: var(--paper); }
+.btn-default:hover { border-color: var(--ink-dim); }
+.btn-subtle { color: var(--ink-dim); }
+.btn-subtle:hover { color: var(--ink); background: var(--board); }
 .btn-danger { background: var(--danger); color: #fff; }
-.btn-danger-outline { background: transparent; color: var(--danger); border-color: var(--danger); }
-.btn-subtle { background: transparent; color: var(--text-dim); }
-.btn-icon { width: 36px; padding: 0; }
+.btn-danger-quiet { color: var(--danger); }
+.btn-danger-quiet:hover { background: var(--danger-wash); }
+.btn-icon { width: 38px; padding: 0; }
 .btn-block { width: 100%; }
-.btn[aria-pressed="true"] { background: var(--primary-light); color: var(--primary-text); border-color: var(--primary); }
+.btn[aria-pressed="true"] { background: var(--mikan-wash); border-color: var(--mikan); }
+.btn:disabled { opacity: .45; cursor: default; }
 
 /* ---------- 入力欄 ---------- */
-.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-.field label { font-size: 14px; font-weight: 600; }
-.req { color: var(--danger); margin-left: 2px; }
-.hint { font-size: 12px; color: var(--text-dim); }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+.field > label, .label { font-size: 14px; font-weight: 700; }
+.req { color: var(--danger); margin-left: 2px; font-weight: 700; }
+.hint { font-size: 13px; color: var(--ink-dim); }
 .input, .select, .textarea {
   width: 100%;
-  min-height: 36px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--paper);
+  color: var(--ink);
   font: inherit;
-  font-size: 15px;
+  font-size: 16px; /* スマホで拡大されないよう16px以上 */
 }
-.textarea { min-height: 80px; resize: vertical; }
-.input:focus, .select:focus, .textarea:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+.textarea { min-height: 84px; resize: vertical; line-height: 1.7; }
+.input:focus, .select:focus, .textarea:focus { outline: 2px solid var(--mikan); outline-offset: -1px; border-color: var(--mikan); }
 .input.error { border-color: var(--danger); }
-.error-text { font-size: 12px; color: var(--danger); }
+.error-text { font-size: 13px; color: var(--danger); }
 
 /* ---------- 全体の枠 ---------- */
-.container { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 16px 56px; }
 .narrow { max-width: 760px; }
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-.page-title { font-size: 24px; margin: 0 0 16px; }
-.section-title { font-size: 18px; margin: 0 0 12px; }
+/* 紙：内容を1枚にまとめる面。影は付けない */
+.sheet { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius-lg); }
+.page-title { font-size: 26px; margin: 0 0 20px; }
+.section-title { font-size: 20px; margin: 0 0 12px; }
 
-/* ---------- バッジ・タグ ---------- */
-.badge {
+/* ---------- カテゴリ・タグ・★ ---------- */
+.category {
   display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--primary-light);
-  color: var(--primary-text);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 8px;
+  border-radius: 4px;
+  background: var(--mikan-wash);
+  color: var(--ink);
+  border-left: 3px solid var(--mikan);
   white-space: nowrap;
 }
-.tag {
-  display: inline-block;
-  font-size: 12px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  white-space: nowrap;
-}
-.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 13px; color: var(--ink-dim); white-space: nowrap; }
+.tags { display: flex; flex-wrap: wrap; gap: 2px 10px; }
 .star { color: var(--star); }
-.star-off { color: var(--text-dim); }
+.star-off { color: var(--ink-dim); }
+.minutes { font-size: 13px; color: var(--ink-dim); white-space: nowrap; }
+.minutes b { color: var(--ink); font-size: 15px; }
 
 /* ---------- 写真 ---------- */
 .photo {
   aspect-ratio: 4 / 3;
   width: 100%;
-  object-fit: cover;
   display: block;
-  background: linear-gradient(135deg, #ffd8a8, #ffa94d);
+  border-radius: 10px;
+  /* 見本の写真の代わり：料理らしい暖色の面 */
+  background:
+    radial-gradient(circle at 38% 42%, #d9822b 0 18%, transparent 19%),
+    radial-gradient(circle at 60% 55%, #b8541f 0 14%, transparent 15%),
+    radial-gradient(circle at 52% 40%, #e9b44c 0 10%, transparent 11%),
+    radial-gradient(circle at 50% 50%, #f3efe6 0 42%, #c9b79c 43% 46%, #7d6a57 47%);
 }
 .no-image {
   aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: repeating-linear-gradient(45deg, var(--bg), var(--bg) 10px, var(--border) 10px, var(--border) 11px);
-  color: var(--text-dim);
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 10px;
+  border: 1px dashed var(--rule-strong);
+  background: var(--paper);
+  color: var(--ink-dim);
+  font-size: 13px;
 }
 
 /* ---------- 通知（Mantine の notifications に相当） ---------- */
@@ -224,54 +233,34 @@ a { color: var(--primary-text); }
   gap: 8px;
   width: min(360px, calc(100vw - 32px));
 }
-@media (max-width: 640px) {
-  .toast-area { right: 50%; transform: translateX(50%); top: 64px; }
-}
+@media (max-width: 640px) { .toast-area { right: 50%; transform: translateX(50%); top: 64px; } }
 .toast {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 5px solid var(--success);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-left: 5px solid var(--wakana);
   border-radius: var(--radius);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
+  box-shadow: 0 8px 24px rgba(20, 30, 38, .18);
   padding: 10px 12px;
   font-size: 14px;
 }
 .toast.error { border-left-color: var(--danger); }
 .toast b { display: block; }
-.toast .close { margin-left: auto; background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px; }
+.toast .close { margin-left: auto; background: none; border: none; color: var(--ink-dim); cursor: pointer; font-size: 16px; }
 
 /* ---------- ダイアログ ---------- */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .45);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 40;
-}
+.overlay { position: fixed; inset: 0; background: rgba(20, 28, 34, .5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 40; }
 .overlay.open { display: flex; }
-.dialog {
-  background: var(--surface);
-  border-radius: 12px;
-  width: min(440px, 100%);
-  padding: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
-}
-.dialog h2 { font-size: 18px; margin: 0 0 8px; }
-.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.dialog { background: var(--paper); border-radius: var(--radius-lg); width: min(440px, 100%); padding: 22px; box-shadow: 0 16px 48px rgba(0, 0, 0, .3); }
+.dialog h2 { font-size: 19px; margin: 0 0 8px; }
+.dialog p { margin: 0; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
 
 /* 下から出る窓（スマホの絞り込み） */
 .drawer-overlay { align-items: flex-end; padding: 0; }
-.drawer {
-  background: var(--surface);
-  width: 100%;
-  border-radius: 16px 16px 0 0;
-  padding: 16px 16px 24px;
-  max-height: 85vh;
-  overflow: auto;
-}
+.drawer { background: var(--paper); width: 100%; border-radius: 16px 16px 0 0; padding: 18px 16px 24px; max-height: 85vh; overflow: auto; }
+
+/* ---------- 共通の警告の帯 ---------- */
+.alert { background: var(--danger-wash); border-left: 4px solid var(--danger); color: var(--ink); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; margin-bottom: 18px; }

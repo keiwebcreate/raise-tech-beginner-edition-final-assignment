@@ -15,7 +15,7 @@
 |---|---|---|
 | [requirements.md](requirements.md)（要件定義書） | 1.0 | 確定（2026-11-03） |
 | [tech-stack.md](tech-stack.md)（技術スタック） | 1.0 | 確定（2026-11-03） |
-| [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.0 | 確定（2026-11-03） |
+| [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.1 | 見た目を frontend-design で作り直し（イシュー #8） |
 
 ## GitHub の設定
 
