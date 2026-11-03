@@ -1,0 +1,14 @@
+/* 全体の土台。色と書体は Mantine のテーマ（src/shared/theme.ts）で決める */
+
+:root {
+  /* まな板（背景） */
+  --app-board: #f4f5f1;
+}
+
+[data-mantine-color-scheme="dark"] {
+  --app-board: #1b2228;
+}
+
+body {
+  background: var(--app-board);
+}

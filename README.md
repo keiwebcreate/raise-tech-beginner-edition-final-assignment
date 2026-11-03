@@ -81,12 +81,66 @@ flowchart LR
 | 基本設計：画面設計・モックアップ | ✅ 完了 |
 | 基本設計：テーブル設計・API 設計・AWS 構成 | ✅ 完了 |
 | 詳細設計 | ✅ 完了 |
-| 環境構築・実装・テスト | ⏳ これから |
+| 環境構築 | ✅ 完了（開発用の DB、Laravel・Next.js のひな形） |
+| 実装・テスト | ⏳ これから |
 | AWS へのデプロイ | ⏳ これから |
 
 ## 開発環境の作り方
 
-環境構築の工程で書きます。
+Windows 11 で作っています。くわしくは [詳細設計書 3章](docs/detailed-design.md#3-開発環境)。
+
+### 必要なもの
+
+| 道具 | 版 | 使い道 |
+|---|---|---|
+| [Laravel Herd](https://herd.laravel.com/windows) | PHP 8.5 を入れておく（`php85` で呼べる。拡張機能 `intl`・`gd`・`pdo_mysql`） | Laravel |
+| [fnm](https://github.com/Schniz/fnm) | Node.js 24（`frontend/.node-version`） | Next.js |
+| Docker Desktop | | 開発用の MySQL 8.4 |
+
+### 最初の1回
+
+1. Windows のユーザー環境変数 `RECIPE_DB_PASSWORD` に、開発用の DB のパスワード（自分で決める）を登録する
+2. DB を起動する（リポジトリのルートで）
+
+   ```powershell
+   docker compose up -d
+   ```
+
+3. Laravel の準備（`backend/`）
+
+   ```powershell
+   php85 "$env:USERPROFILE\.config\herd\bin\composer.phar" install
+   Copy-Item .env.example .env
+   php85 artisan key:generate
+   php85 artisan migrate
+   ```
+
+4. Next.js の準備（`frontend/`）
+
+   ```powershell
+   fnm use
+   npm install
+   ```
+
+### 起動
+
+| もの | 場所 | コマンド | ポート |
+|---|---|---|---|
+| DB | ルート | `docker compose up -d` | 3308 |
+| Laravel | `backend/` | `php85 artisan serve` | 8000 |
+| Next.js | `frontend/` | `npm run dev` | 3000 |
+
+ブラウザで `http://localhost:3000` を開きます。`/api` と `/sanctum` は、Next.js が Laravel に転送します。
+
+### テストとチェック
+
+| 対象 | コマンド |
+|---|---|
+| Laravel のテスト（Pest） | `php85 artisan test` |
+| Laravel の書き方（Pint）・型（Larastan） | `php85 vendor/bin/pint --test`・`php85 vendor/bin/phpstan analyse` |
+| Next.js のテスト（Vitest） | `npm test` |
+| Next.js の書き方・型（Biome・TypeScript） | `npm run lint`・`npm run typecheck` |
+| 通しのテスト（Playwright） | `npx playwright install`（最初の1回）→ 3つを起動して `npm run e2e` |
 
 ## 作った人
 
