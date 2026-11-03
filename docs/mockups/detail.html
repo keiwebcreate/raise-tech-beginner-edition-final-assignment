@@ -4,42 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>S-03 レシピ詳細｜モックアップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .back { display: inline-block; margin-bottom: 12px; font-size: 14px; text-decoration: none; }
-  .head { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
-  .head h1 { flex: 1 1 280px; margin: 0; font-size: 26px; overflow-wrap: anywhere; }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-  .layout { display: grid; grid-template-columns: 5fr 7fr; gap: 20px; align-items: start; }
-  .box { padding: 16px; margin-bottom: 20px; }
-  .photo-wrap { overflow: hidden; margin-bottom: 20px; }
-  .info { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 8px; }
-  .info .item { font-size: 14px; color: var(--text-dim); }
-  .info .item b { color: var(--text); font-size: 16px; }
+  .back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+  .recipe { padding: 28px 32px 32px; }
+  .head { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-start; padding-bottom: 18px; border-bottom: 1px solid var(--rule); margin-bottom: 26px; }
+  .head-main { flex: 1 1 320px; min-width: 0; }
+  .head h1 { margin: 0 0 8px; font-size: 32px; overflow-wrap: anywhere; }
+  .head .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; }
 
-  .ingredients { list-style: none; margin: 0; padding: 0; }
-  .ingredients li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 2px; border-bottom: 1px dashed var(--border); font-size: 17px; }
-  .ingredients li span:last-child { white-space: nowrap; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 5fr 7fr; gap: 40px; align-items: start; }
 
+  /* 材料：料理本のように、名前と分量を点線でつなぐ */
+  .ingredients { list-style: none; margin: 0; padding: 0; font-size: 18px; }
+  .ingredients li { display: flex; align-items: baseline; gap: 8px; padding: 7px 0; }
+  .ingredients .name { overflow-wrap: anywhere; }
+  .ingredients .leader { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--rule-strong); transform: translateY(-5px); }
+  .ingredients .qty { font-weight: 700; white-space: nowrap; }
+  .serves { font-family: var(--font-body); font-weight: 400; font-size: 15px; color: var(--ink-dim); margin-left: 6px; }
+
+  /* 作り方：大きな番号で区切る */
   .steps { list-style: none; counter-reset: s; margin: 0; padding: 0; }
-  .steps li { counter-increment: s; display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 17px; line-height: 1.8; }
-  .steps li:last-child { border-bottom: none; }
-  .steps li::before { content: counter(s); flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 14px; margin-top: 3px; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 52px 1fr; gap: 4px; padding: 16px 0; border-top: 1px solid var(--rule); font-size: 18px; line-height: 1.9; }
+  .steps li:first-child { border-top: none; padding-top: 4px; }
+  .steps li::before { content: counter(s); font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1.1; color: var(--mikan-deep); }
 
-  .memo { white-space: pre-wrap; margin: 0; }
-  .cook-summary { display: flex; gap: 24px; margin-bottom: 12px; flex-wrap: wrap; }
-  .cook-summary div { font-size: 13px; color: var(--text-dim); }
-  .cook-summary b { display: block; font-size: 22px; color: var(--text); }
+  .sub { margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .memo { white-space: pre-wrap; margin: 0; font-size: 16px; }
+
+  /* 作った記録：若菜の色 */
+  .cook-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; margin-bottom: 12px; }
+  .cook-head .section-title { margin: 0; }
+  .cook-stat { font-size: 14px; color: var(--ink-dim); }
+  .cook-stat b { font-family: var(--font-display); font-size: 24px; color: var(--wakana); margin: 0 2px; }
   .records { list-style: none; padding: 0; margin: 0; }
-  .records li { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--border); font-size: 14px; }
-  .records time { white-space: nowrap; font-weight: 600; }
-  .records p { margin: 0; flex: 1; color: var(--text-dim); overflow-wrap: anywhere; }
+  .records li { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-top: 1px dashed var(--rule); font-size: 15px; }
+  .records time { white-space: nowrap; font-weight: 700; }
+  .records p { margin: 0; flex: 1; color: var(--ink-dim); overflow-wrap: anywhere; }
 
-  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 32px; }
+    .photo-col { display: grid; gap: 24px; }
+  }
   @media (max-width: 640px) {
-    .head h1 { font-size: 22px; }
+    .container { padding-left: 0; padding-right: 0; padding-top: 12px; }
+    .back { margin-left: 16px; }
+    .recipe { border-left: none; border-right: none; border-radius: 0; padding: 20px 16px 28px; }
+    .head h1 { font-size: 26px; }
     .actions { width: 100%; }
     .actions .btn { flex: 1 1 auto; }
+    .actions .btn-danger-quiet { flex: 0 0 auto; margin-left: auto; }
+    .steps li { grid-template-columns: 40px 1fr; font-size: 17px; }
+    .steps li::before { font-size: 28px; }
+    .ingredients { font-size: 17px; }
   }
 </style>
 </head>
@@ -48,91 +69,93 @@
 
 <header class="header">
   <div class="header-inner">
-    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <a class="logo" href="list.html"><span class="logo-mark" aria-hidden="true"></span>Recipe Box</a>
     <nav class="header-nav">
       <a class="btn btn-primary" href="form.html">＋ レシピを追加</a>
-      <a class="btn btn-subtle" href="settings.html">⚙ 設定</a>
+      <a class="btn btn-subtle" href="settings.html">設定</a>
     </nav>
     <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
   </div>
   <div class="mobile-menu">
     <a href="form.html">＋ レシピを追加</a>
-    <a href="settings.html">⚙ 設定</a>
+    <a href="settings.html">設定</a>
   </div>
 </header>
 
 <main class="container">
-  <a class="back" href="list.html">‹ 一覧に戻る（検索の条件はそのまま）</a>
+  <a class="back" href="list.html">一覧に戻る</a>
 
-  <div class="head">
-    <h1>肉じゃが</h1>
-    <div class="actions">
-      <button class="btn btn-default" aria-pressed="true" title="お気に入り"><span class="star">★</span> お気に入り</button>
-      <button class="btn btn-primary" data-open="d02">🍳 作った</button>
-      <a class="btn btn-default" href="form.html?edit">✎ 編集</a>
-      <button class="btn btn-default" data-open="d04">⧉ 複製</button>
-      <button class="btn btn-danger-outline" data-open="d01">🗑 削除</button>
-    </div>
-  </div>
-
-  <div class="layout">
-    <!-- 左：写真・基本情報・材料 -->
-    <div>
-      <div class="card photo-wrap"><div class="photo" role="img" aria-label="肉じゃがの写真"></div></div>
-      <section class="card box">
-        <div class="info">
-          <span class="badge">主菜</span>
-          <span class="item">⏱ <b>30</b> 分</span>
+  <article class="sheet recipe">
+    <div class="head">
+      <div class="head-main">
+        <h1>肉じゃが</h1>
+        <div class="meta">
+          <span class="category">主菜</span>
+          <span class="minutes">調理時間 <b>30</b>分</span>
+          <span class="tags"><span class="tag">#和食</span><span class="tag">#作り置き</span></span>
         </div>
-        <div class="tags"><span class="tag">#和食</span><span class="tag">#作り置き</span></div>
-      </section>
-      <section class="card box">
-        <h2 class="section-title">材料 <span class="hint">（2人分）</span></h2>
-        <ul class="ingredients">
-          <li><span>じゃがいも</span><span>3個</span></li>
-          <li><span>牛こま切れ肉</span><span>200g</span></li>
-          <li><span>玉ねぎ</span><span>1個</span></li>
-          <li><span>にんじん</span><span>1/2本</span></li>
-          <li><span>しらたき</span><span>1袋</span></li>
-          <li><span>だし汁</span><span>300ml</span></li>
-          <li><span>しょうゆ</span><span>大さじ3</span></li>
-          <li><span>砂糖</span><span>大さじ2</span></li>
-          <li><span>みりん</span><span>大さじ2</span></li>
-        </ul>
-      </section>
+      </div>
+      <div class="actions">
+        <button class="btn btn-default" aria-pressed="true"><span class="star">★</span> お気に入り</button>
+        <button class="btn btn-primary" data-open="d02">作った</button>
+        <a class="btn btn-default" href="form.html?edit">編集</a>
+        <button class="btn btn-default" data-open="d04">複製</button>
+        <button class="btn btn-danger-quiet" data-open="d01">削除</button>
+      </div>
     </div>
 
-    <!-- 右：作り方・メモ・作った記録 -->
-    <div>
-      <section class="card box">
-        <h2 class="section-title">作り方</h2>
-        <ol class="steps">
-          <li>じゃがいもは皮をむいて4等分に切り、水にさらす。玉ねぎはくし切り、にんじんは乱切りにする。</li>
-          <li>鍋に油を熱し、牛肉を炒める。色が変わったら玉ねぎ・にんじん・じゃがいもを加えて炒め合わせる。</li>
-          <li>だし汁と砂糖・みりんを加え、落としぶたをして中火で10分煮る。</li>
-          <li>しょうゆとしらたきを加え、さらに10分煮る。じゃがいもに竹串がすっと通ればできあがり。</li>
-        </ol>
-      </section>
-      <section class="card box">
-        <h2 class="section-title">メモ</h2>
-        <p class="memo">砂糖は少なめ（大さじ1.5）でもちょうどよい。
+    <div class="layout">
+      <div class="photo-col">
+        <div class="photo" role="img" aria-label="肉じゃがの写真"></div>
+        <section>
+          <h2 class="section-title" style="margin-top:24px">材料<span class="serves">2人分</span></h2>
+          <ul class="ingredients">
+            <li><span class="name">じゃがいも</span><span class="leader"></span><span class="qty">3個</span></li>
+            <li><span class="name">牛こま切れ肉</span><span class="leader"></span><span class="qty">200g</span></li>
+            <li><span class="name">玉ねぎ</span><span class="leader"></span><span class="qty">1個</span></li>
+            <li><span class="name">にんじん</span><span class="leader"></span><span class="qty">1/2本</span></li>
+            <li><span class="name">しらたき</span><span class="leader"></span><span class="qty">1袋</span></li>
+            <li><span class="name">だし汁</span><span class="leader"></span><span class="qty">300ml</span></li>
+            <li><span class="name">しょうゆ</span><span class="leader"></span><span class="qty">大さじ3</span></li>
+            <li><span class="name">砂糖</span><span class="leader"></span><span class="qty">大さじ2</span></li>
+            <li><span class="name">みりん</span><span class="leader"></span><span class="qty">大さじ2</span></li>
+          </ul>
+        </section>
+      </div>
+
+      <div>
+        <section>
+          <h2 class="section-title">作り方</h2>
+          <ol class="steps">
+            <li>じゃがいもは皮をむいて4等分に切り、水にさらす。玉ねぎはくし切り、にんじんは乱切りにする。</li>
+            <li>鍋に油を熱し、牛肉を炒める。色が変わったら玉ねぎ・にんじん・じゃがいもを加えて炒め合わせる。</li>
+            <li>だし汁と砂糖・みりんを加え、落としぶたをして中火で10分煮る。</li>
+            <li>しょうゆとしらたきを加え、さらに10分煮る。じゃがいもに竹串がすっと通ればできあがり。</li>
+          </ol>
+        </section>
+
+        <section class="sub">
+          <h2 class="section-title">メモ</h2>
+          <p class="memo">砂糖は少なめ（大さじ1.5）でもちょうどよい。
 次の日のほうが味がしみておいしい。</p>
-      </section>
-      <section class="card box">
-        <h2 class="section-title">作った記録</h2>
-        <div class="cook-summary">
-          <div>作った回数<b>5 回</b></div>
-          <div>最後に作った日<b>2026/11/03</b></div>
-        </div>
-        <ul class="records">
-          <li><time>2026/11/03</time><p>塩を減らしたらちょうどよかった</p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="この記録を削除">🗑</button></li>
-          <li><time>2026/10/20</time><p>じゃがいもをメークインにしたら煮崩れしなかった</p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="この記録を削除">🗑</button></li>
-          <li><time>2026/09/28</time><p></p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="この記録を削除">🗑</button></li>
-        </ul>
-        <button class="btn btn-subtle" style="margin-top:8px">もっと見る（あと2件）</button>
-      </section>
+        </section>
+
+        <section class="sub">
+          <div class="cook-head">
+            <h2 class="section-title">作った記録</h2>
+            <span class="cook-stat"><b>5</b>回</span>
+            <span class="cook-stat">最後に作った日 <b>11/3</b></span>
+          </div>
+          <ul class="records">
+            <li><time>2026/11/03</time><p>塩を減らしたらちょうどよかった</p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="2026/11/03 の記録を削除">✕</button></li>
+            <li><time>2026/10/20</time><p>じゃがいもをメークインにしたら煮崩れしなかった</p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="2026/10/20 の記録を削除">✕</button></li>
+            <li><time>2026/09/28</time><p></p><button class="btn btn-subtle btn-icon" data-open="d03" aria-label="2026/09/28 の記録を削除">✕</button></li>
+          </ul>
+          <button class="btn btn-subtle" style="margin-top:6px">ほかの記録を表示（2件）</button>
+        </section>
+      </div>
     </div>
-  </div>
+  </article>
 </main>
 
 <!-- D-01 レシピ削除の確認 -->
@@ -151,7 +174,7 @@
 <div class="overlay" id="d02">
   <div class="dialog" role="dialog" aria-labelledby="d02t">
     <h2 id="d02t">作った記録を残す</h2>
-    <div class="field"><label>作った日<span class="req">*</span></label><input class="input" type="date" value="2026-11-03"></div>
+    <div class="field" style="margin-top:14px"><label>作った日<span class="req">*</span></label><input class="input" type="date" value="2026-11-03" max="2026-11-03"></div>
     <div class="field"><label>ひとことメモ</label><textarea class="textarea" placeholder="例：塩を減らしたらちょうどよかった"></textarea><span class="hint">200文字まで</span></div>
     <div class="dialog-actions">
       <button class="btn btn-default" data-close>やめる</button>

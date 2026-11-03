@@ -4,57 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>S-02 レシピ一覧｜モックアップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  /* 検索・絞り込みの欄 */
-  .filters { padding: 12px; margin-bottom: 16px; }
-  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .filter-row + .filter-row { margin-top: 8px; }
-  .filter-row .input { flex: 1 1 260px; }
-  .filter-row .select { width: auto; flex: 0 1 170px; }
+  /* 検索・絞り込み：枠で囲まず、一覧の上に置く */
+  .search { width: 100%; min-height: 48px; font-size: 17px; padding-left: 16px; border-radius: 24px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .filter-row .select { width: auto; flex: 0 1 180px; min-height: 38px; font-size: 14px; }
   .filter-mobile { display: none; }
-  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .count { color: var(--text-dim); font-size: 14px; margin-right: auto; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--primary-light); color: var(--primary-text); }
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 24px 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .count { margin-right: auto; font-size: 14px; color: var(--ink-dim); }
+  .count b { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin-right: 6px; }
+  .toolbar .select { width: auto; min-height: 38px; font-size: 14px; }
+  .view-switch { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: var(--radius); overflow: hidden; }
+  .view-switch .btn { border: none; border-radius: 0; min-height: 36px; background: var(--paper); }
+  .view-switch .btn[aria-pressed="true"] { background: var(--mikan-wash); box-shadow: inset 0 -3px 0 var(--mikan); }
 
-  /* タイル表示 */
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .tile { overflow: hidden; text-decoration: none; color: inherit; display: block; position: relative; }
-  .tile:hover { outline: 2px solid var(--primary); }
-  .tile-body { padding: 10px 12px 12px; }
-  .tile-title { font-weight: 700; margin: 0 0 4px; font-size: 16px; overflow-wrap: anywhere; }
-  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
-  .fav { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%;
-         background: rgba(255,255,255,.9); border: none; font-size: 18px; cursor: pointer; }
+  /* タイル表示：写真＋料理名だけ。料理本の目次のような並び */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 20px; }
+  .tile { position: relative; display: block; text-decoration: none; color: inherit; }
+  .tile .photo, .tile .no-image { transition: transform .15s; }
+  .tile:hover .photo { transform: scale(1.015); }
+  .tile:hover .tile-title { color: var(--mikan-deep); }
+  .tile-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin: 10px 0 4px; overflow-wrap: anywhere; line-height: 1.45; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .meta + .tags { margin-top: 4px; }
+  .fav { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-radius: 50%; border: none;
+         background: var(--paper); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-  /* リスト表示 */
-  .list { display: none; flex-direction: column; }
-  .row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border); }
-  .row:last-child { border-bottom: none; }
-  .row:hover { background: var(--primary-light); }
-  .row .thumb { width: 72px; flex: none; border-radius: 6px; overflow: hidden; }
+  /* リスト表示：細い線で区切った行 */
+  .list { display: none; flex-direction: column; border-top: 1px solid var(--rule); }
+  .row { display: flex; gap: 14px; align-items: center; padding: 12px 4px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--rule); }
+  .row:hover { background: var(--paper); }
+  .row .thumb { width: 84px; flex: none; }
+  .row .photo, .row .no-image { border-radius: 6px; }
   .row-main { flex: 1; min-width: 0; }
-  .row .tile-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .tile-title { margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .view-list .grid { display: none; }
   .view-list .list { display: flex; }
 
-  .pager { display: flex; justify-content: center; gap: 4px; margin-top: 24px; flex-wrap: wrap; }
-  .pager .btn { min-width: 36px; padding: 0 8px; }
-  .empty { text-align: center; padding: 48px 16px; color: var(--text-dim); }
+  .pager { display: flex; justify-content: center; gap: 6px; margin-top: 36px; flex-wrap: wrap; }
+  .pager .btn { min-width: 40px; padding: 0 10px; }
+  .empty { text-align: center; padding: 48px 16px; }
+  .empty h2 { font-size: 20px; margin: 0 0 6px; }
+  .empty p { color: var(--ink-dim); margin: 0 0 16px; }
 
   @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 760px)  { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+  @media (max-width: 760px)  { .grid { grid-template-columns: repeat(2, 1fr); gap: 20px 12px; } }
   @media (max-width: 640px) {
     .filter-pc { display: none; }
     .filter-mobile { display: flex; gap: 8px; }
     .filter-mobile .input { flex: 1; min-width: 0; }
-    .filters { padding: 0; border: none; box-shadow: none; background: none; }
-    .tile-body { padding: 8px; }
-    .tile-title { font-size: 14px; }
+    .tile-title { font-size: 15px; margin-top: 8px; }
     .tile .tags { display: none; }
+    .row .thumb { width: 64px; }
   }
-  @media (max-width: 359px) { .grid { gap: 8px; } .meta { font-size: 12px; } }
 </style>
 </head>
 <body>
@@ -62,80 +68,75 @@
 
 <header class="header">
   <div class="header-inner">
-    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <a class="logo" href="list.html"><span class="logo-mark" aria-hidden="true"></span>Recipe Box</a>
     <nav class="header-nav">
       <a class="btn btn-primary" href="form.html">＋ レシピを追加</a>
-      <a class="btn btn-subtle" href="settings.html">⚙ 設定</a>
+      <a class="btn btn-subtle" href="settings.html">設定</a>
     </nav>
     <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
   </div>
   <div class="mobile-menu">
     <a href="form.html">＋ レシピを追加</a>
-    <a href="settings.html">⚙ 設定</a>
+    <a href="settings.html">設定</a>
   </div>
 </header>
 
 <main class="container">
-  <!-- 検索・絞り込み（パソコン：横並び） -->
-  <section class="card filters">
-    <div class="filter-pc">
-      <div class="filter-row">
-        <input class="input" type="search" placeholder="🔍 料理名・材料で検索（例：豚肉）" value="">
-      </div>
-      <div class="filter-row">
-        <select class="select" aria-label="カテゴリ">
-          <option>カテゴリ：すべて</option><option selected>主菜</option><option>副菜</option><option>サラダ</option>
-          <option>汁物・スープ</option><option>ご飯もの</option><option>麺類</option><option>パン・粉もの</option>
-          <option>お弁当・おつまみ</option><option>デザート・おやつ</option><option>飲み物</option>
-          <option>たれ・ソース・調味料</option><option>その他</option>
-        </select>
-        <select class="select" aria-label="タグ">
-          <option>タグ：すべて</option><option>和食</option><option>時短</option><option>作り置き</option>
-        </select>
-        <select class="select" aria-label="調理時間">
-          <option>調理時間：指定なし</option><option>15分以内</option><option>30分以内</option><option>60分以内</option>
-        </select>
-        <button class="btn btn-default" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')">☆ お気に入りだけ</button>
-        <button class="btn btn-subtle">条件をクリア</button>
-      </div>
+  <!-- 検索・絞り込み（パソコン） -->
+  <section class="filter-pc" aria-label="検索と絞り込み">
+    <input class="input search" type="search" placeholder="料理名や材料で探す（例：豚肉）">
+    <div class="filter-row">
+      <select class="select" aria-label="カテゴリ">
+        <option>カテゴリ：すべて</option><option selected>主菜</option><option>副菜</option><option>サラダ</option>
+        <option>汁物・スープ</option><option>ご飯もの</option><option>麺類</option><option>パン・粉もの</option>
+        <option>お弁当・おつまみ</option><option>デザート・おやつ</option><option>飲み物</option>
+        <option>たれ・ソース・調味料</option><option>その他</option>
+      </select>
+      <select class="select" aria-label="タグ">
+        <option>タグ：すべて</option><option>和食</option><option>時短</option><option>作り置き</option>
+      </select>
+      <select class="select" aria-label="調理時間">
+        <option>調理時間：指定なし</option><option>15分以内</option><option>30分以内</option><option>60分以内</option>
+      </select>
+      <button class="btn btn-default" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')"><span class="star">★</span> お気に入りだけ</button>
+      <button class="btn btn-subtle">条件をクリア</button>
     </div>
-    <!-- スマホ：キーワード＋「絞り込み」ボタン -->
-    <div class="filter-mobile">
-      <input class="input" type="search" placeholder="🔍 料理名・材料で検索">
-      <button class="btn btn-default" data-open="drawer">絞り込み (1)</button>
-    </div>
+  </section>
+  <!-- 検索・絞り込み（スマホ） -->
+  <section class="filter-mobile" aria-label="検索と絞り込み">
+    <input class="input search" type="search" placeholder="料理名や材料で探す">
+    <button class="btn btn-default" data-open="drawer">絞り込み (1)</button>
   </section>
 
   <div class="toolbar">
-    <span class="count">主菜 ｜ 24件中 1〜20件</span>
-    <select class="select" style="width:auto" aria-label="並び替え">
+    <span class="count"><b>主菜</b>24件中 1〜20件</span>
+    <select class="select" aria-label="並び替え">
       <option>新しい順</option><option>料理名順</option><option>調理時間の短い順</option><option>最後に作った日が古い順</option>
     </select>
-    <span>
-      <button class="btn btn-default btn-icon" id="v-grid" aria-pressed="true" aria-label="タイル表示" title="タイル表示">▦</button>
-      <button class="btn btn-default btn-icon" id="v-list" aria-pressed="false" aria-label="リスト表示" title="リスト表示">☰</button>
+    <span class="view-switch">
+      <button class="btn btn-icon" id="v-grid" aria-pressed="true" aria-label="タイル表示" title="タイル表示">▦</button>
+      <button class="btn btn-icon" id="v-list" aria-pressed="false" aria-label="リスト表示" title="リスト表示">☰</button>
     </span>
   </div>
 
   <div id="results">
-    <!-- タイル表示 -->
     <div class="grid" id="grid"></div>
-    <!-- リスト表示 -->
-    <div class="list card" id="list"></div>
+    <div class="list" id="list"></div>
   </div>
 
   <nav class="pager" aria-label="ページ">
-    <button class="btn btn-default" disabled>‹</button>
-    <button class="btn btn-primary">1</button>
+    <button class="btn btn-default" disabled aria-label="前のページ">‹</button>
+    <button class="btn btn-primary" aria-current="page">1</button>
     <button class="btn btn-default">2</button>
-    <button class="btn btn-default">›</button>
+    <button class="btn btn-default" aria-label="次のページ">›</button>
   </nav>
 
-  <details style="margin-top:32px">
+  <details style="margin-top:40px">
     <summary class="hint">参考：検索結果が0件のときの表示</summary>
-    <div class="card empty" style="margin-top:8px">
-      <div style="font-size:40px">🍽️</div>
-      <p>条件に合うレシピがありません。<br>条件を変えるか、<a href="form.html">新しいレシピを追加</a>してください。</p>
+    <div class="empty">
+      <h2>条件に合うレシピがありません</h2>
+      <p>キーワードを短くするか、絞り込みの条件を外してください。</p>
+      <button class="btn btn-default">条件をクリア</button>
     </div>
   </details>
 </main>
@@ -150,7 +151,7 @@
       <select class="select"><option>すべて</option><option>和食</option><option>時短</option></select></div>
     <div class="field"><label>調理時間</label>
       <select class="select"><option>指定なし</option><option>15分以内</option><option>30分以内</option><option>60分以内</option></select></div>
-    <div class="field"><label><input type="checkbox"> ☆ お気に入りだけ</label></div>
+    <div class="field"><label><input type="checkbox"> お気に入りだけ</label></div>
     <div style="display:flex; gap:8px">
       <button class="btn btn-default" style="flex:1" data-close>クリア</button>
       <button class="btn btn-primary" style="flex:2" data-close>この条件で表示</button>
@@ -172,21 +173,22 @@
     { name: '回鍋肉', cat: '主菜', min: 15, tags: ['中華', '時短'], fav: false, photo: true },
   ];
   const tagsHtml = (r) => `<div class="tags">${r.tags.map((t) => `<span class="tag">#${t}</span>`).join('')}</div>`;
-  const photoHtml = (r) => r.photo ? `<div class="photo" role="img" aria-label="${r.name}の写真"></div>` : `<div class="no-image">No Image</div>`;
-  const meta = (r) => `<div class="meta"><span class="badge">${r.cat}</span><span>⏱ ${r.min}分</span></div>`;
+  const photoHtml = (r) => r.photo ? `<div class="photo" role="img" aria-label="${r.name}の写真"></div>` : `<div class="no-image">写真なし</div>`;
+  const meta = (r) => `<div class="meta"><span class="category">${r.cat}</span><span class="minutes"><b>${r.min}</b>分</span></div>`;
+  const star = (r) => r.fav ? '<span class="star">★</span>' : '<span class="star-off">☆</span>';
 
   document.getElementById('grid').innerHTML = recipes.map((r) => `
-    <a class="card tile" href="detail.html">
+    <a class="tile" href="detail.html">
       ${photoHtml(r)}
-      <button class="fav" aria-label="お気に入り" onclick="event.preventDefault()">${r.fav ? '<span class="star">★</span>' : '<span class="star-off">☆</span>'}</button>
-      <div class="tile-body"><p class="tile-title">${r.name}</p>${meta(r)}${tagsHtml(r)}</div>
+      <button class="fav" aria-label="お気に入り" aria-pressed="${r.fav}" onclick="event.preventDefault()">${star(r)}</button>
+      <p class="tile-title">${r.name}</p>${meta(r)}${tagsHtml(r)}
     </a>`).join('');
 
   document.getElementById('list').innerHTML = recipes.map((r) => `
     <a class="row" href="detail.html">
       <div class="thumb">${photoHtml(r)}</div>
-      <div class="row-main"><p class="tile-title">${r.name}</p>${meta(r)}${tagsHtml(r)}</div>
-      <span aria-label="お気に入り">${r.fav ? '<span class="star">★</span>' : '<span class="star-off">☆</span>'}</span>
+      <div class="row-main"><p class="tile-title">${r.name}</p>${meta(r)}</div>
+      <span aria-label="お気に入り">${star(r)}</span>
     </a>`).join('');
 
   // タイル／リストの切り替え（本番は選んだ形をブラウザに覚えさせる）
