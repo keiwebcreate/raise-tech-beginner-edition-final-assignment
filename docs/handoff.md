@@ -17,6 +17,7 @@
 | [tech-stack.md](tech-stack.md)（技術スタック） | 1.0 | 確定（2026-11-03） |
 | [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
 | [database-design.md](database-design.md)（テーブル設計書） | 1.0 | 確定（2026-11-03） |
+| [api-design.md](api-design.md)（API 設計書） | 0.1 | ユーザー確認待ち（5章の「新しく決めたこと」も） |
 
 ## GitHub の設定
 
