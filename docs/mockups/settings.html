@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-06 設定｜モックアップ</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .box { padding: 20px; margin-bottom: 20px; }
+  .box p { margin-top: 0; }
+  .who { font-size: 14px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="mock-note">モックアップ S-06 設定 ｜ <a href="index.html">画面の一覧へ</a></div>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <nav class="header-nav">
+      <a class="btn btn-primary" href="form.html">＋ レシピを追加</a>
+      <a class="btn btn-subtle" href="settings.html" aria-current="page">⚙ 設定</a>
+    </nav>
+    <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
+  </div>
+  <div class="mobile-menu">
+    <a href="form.html">＋ レシピを追加</a>
+    <a href="settings.html">⚙ 設定</a>
+  </div>
+</header>
+
+<main class="container narrow">
+  <h1 class="page-title">設定</h1>
+
+  <section class="card box">
+    <h2 class="section-title">パスワードの変更</h2>
+    <div class="field"><label>今のパスワード<span class="req">*</span></label><input class="input" type="password" autocomplete="current-password"></div>
+    <div class="field"><label>新しいパスワード<span class="req">*</span></label><input class="input" type="password" autocomplete="new-password"><span class="hint">8文字以上</span></div>
+    <div class="field"><label>新しいパスワード（確認）<span class="req">*</span></label><input class="input" type="password" autocomplete="new-password"></div>
+    <button class="btn btn-primary" data-toast="success" data-title="パスワードを変更しました">変更する</button>
+  </section>
+
+  <section class="card box">
+    <h2 class="section-title">ログアウト</h2>
+    <p class="who">ログイン中：you@example.com</p>
+    <p>共用のパソコンなどでログインしたときは、使い終わったらログアウトしてください。</p>
+    <a class="btn btn-default" href="login.html">ログアウト</a>
+  </section>
+</main>
+
+<script src="common.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| 版 | 0.3 |
+| 版 | 1.0 |
 | 作成日 | 2026-11-03 |
 | バージョンの確認日 | 2026-11-03 |
 
@@ -24,11 +24,11 @@
 
 | 技術 | 役割 | バージョン | 補足 |
 |---|---|---|---|
-| Next.js | 画面を作る枠組み（フレームワーク） | 16.4 系（16.4.4） | |
+| Next.js | 画面を作る枠組み（フレームワーク） | 16.4 系（16.4.4） | 本番では Node.js のサーバーとして動かす（3章） |
 | React | Next.js の土台になる部品の仕組み | 19.3 系（19.3.1） | Next.js と一緒に入る。初級編でも使ったが、Next.js の一部として使うので条件には反しない |
 | Node.js | Next.js を動かす実行環境 | 26 系 LTS（26.13.0） | 2026-10-28 に LTS（長期サポート版）になった。サポートは 2029-04-30 まで |
-| TypeScript | 型のある JavaScript。入力の間違いを書いている段階で見つけられる | 7.0 系（7.0.2） | 使う（2026-11-03 決定）。言語なので、初級編と同じでも条件には反しないと判断 |
-| Mantine | 画面の部品集（ボタン・入力欄・タグ入力・ページ分け・確認ダイアログなど） | 9.7 系（9.7.4） | 見た目の土台にする（2026-11-03 決定）。React 19.2 以上に対応。写真のドラッグ＆ドロップは @mantine/dropzone、日付の選択は @mantine/dates（どちらも 9.7.4）を使う予定 |
+| TypeScript | 型のある JavaScript。入力の間違いを書いている段階で見つけられる | 7.0 系（7.0.2） | 言語なので、初級編と同じでも条件には反しないと判断 |
+| Mantine | 画面の部品集（ボタン・入力欄・タグ入力・ページ分け・確認ダイアログ・通知など） | 9.7 系（9.7.4） | 見た目の土台にする。React 19.2 以上に対応。写真のドラッグ＆ドロップは @mantine/dropzone、日付の選択は @mantine/dates、通知は @mantine/notifications（いずれも 9.7.4）を使う予定 |
 | CSS Modules | Mantine の見た目の調整、独自の部品のデザイン | Next.js に最初から入っている | クラス名が画面どうしでぶつからない、ふつうの CSS。Tailwind CSS は使わない |
 
 ### 2.2 サーバー（バックエンド）
@@ -36,7 +36,8 @@
 | 技術 | 役割 | バージョン | 補足 |
 |---|---|---|---|
 | PHP | Laravel を動かす言語 | 8.5 系（8.5.12） | セキュリティ修正は 2029-12-31 まで。Laravel 13 は PHP 8.3 以上が必要 |
-| Laravel | サーバー側の枠組み（フレームワーク） | 13 系（13.39.0） | セキュリティ修正は 2028-03-17 まで |
+| Laravel | サーバー側の枠組み（フレームワーク） | 13 系（13.39.0） | セキュリティ修正は 2028-03-17 まで。画面は作らず、API だけを受け持つ |
+| Laravel Sanctum | ログインの仕組み | 4.3 系（v4.3.3） | 「SPA 認証」を使う。ログインするとクッキー（ログインの証明）をブラウザに渡し、以後はブラウザが自動で送る。クッキーは JavaScript から読めない設定にする。「ログイン状態を保持」に対応 |
 | Composer | PHP の部品（ライブラリ）を入れる道具 | 2.11 系（2.11.1） | |
 
 ### 2.3 データベース
@@ -49,30 +50,50 @@
 
 | サービス | 役割 | 補足 |
 |---|---|---|
+| CloudFront | 入口。HTTPS を受け持ち、EC2 へ中継する | 独自ドメインは使わず、`xxxx.cloudfront.net` の URL で HTTPS にする。ほぼ無料（無料枠の範囲） |
 | EC2 | アプリを動かすサーバー | OS は Amazon Linux 2023（サポートは 2029-06-30 まで） |
-| RDS | MySQL を動かす | MySQL 8.4 系 |
+| Nginx | EC2 の中の入口。画面と API への振り分け | 1.30 系（安定版）を目安。Amazon Linux 2023 で入れられる版を使う |
+| RDS | MySQL を動かす | MySQL 8.4 系。自動バックアップ7日分 |
 | S3 | 写真の保存先 | |
-| Nginx | EC2 の入口。画面と API への振り分け | 1.30 系（安定版）を目安。Amazon Linux 2023 で入れられる版を使う |
 
-HTTPS の付け方（CloudFront など）や、画面と API の分け方は基本設計で決める。
+### 2.5 テスト
 
-### 2.5 開発の道具
+| 種類 | 道具 | バージョン | 何を確かめるか |
+|---|---|---|---|
+| サーバー側 | Pest | v5.3.5 | API が正しく動くか（ログインなしで断られる、入力の誤りで断られる、など）。Laravel が標準として勧めている |
+| 画面側 | Vitest ＋ React Testing Library | 5.1.0 ／ 16.3.3 | 部品ひとつひとつの動き（材料の行の追加など） |
+| 通しのテスト（E2E） | Playwright | 1.64.1 | 実際のブラウザで、ログイン → 登録 → 一覧など主な流れだけ。Chrome・Firefox・Safari 系で動かし、対応ブラウザ（N-02）の確認にも使う |
+
+いずれも GitHub に送ったとき、GitHub Actions で自動実行する（N-33）。
+
+### 2.6 開発の道具
 
 | 技術 | 役割 | 補足 |
 |---|---|---|
 | Docker | 開発用の MySQL を動かす | 3306番は別のプロジェクトが使っているので、別の番号にする |
 | Git・GitHub | ソースの管理。提出物はリポジトリの URL | |
-| GitHub Actions | GitHub に送ったときの自動テスト | |
+| GitHub Actions | GitHub に送ったときの自動テスト。本番用のビルド（公開用の変換）もここで行う | 小さな EC2 ではビルドのメモリが足りなくなるおそれがあるため |
 
 ---
 
-## 3. まだ決めていないもの（基本設計で決める）
+## 3. 本番の構成
 
-| 項目 | 内容 |
-|---|---|
-| ログインの方式 | Laravel の仕組み（Sanctum など）のどれを使うか |
-| テストの道具 | サーバー側・画面側それぞれ |
-| HTTPS の付け方 | CloudFront、ロードバランサーなど |
+```
+ブラウザ
+  │ HTTPS
+  ▼
+CloudFront
+  │
+  ▼
+EC2（Amazon Linux 2023）
+  └ Nginx ─┬─ /            → Next.js（Node.js のサーバー）
+           └─ /api・/sanctum → Laravel（PHP）──┬→ RDS（MySQL 8.4）
+                                               └→ S3（写真）
+```
+
+- 画面（Next.js）と API（Laravel）を**同じドメイン**で配る。Sanctum の SPA 認証は、同じドメインであることが前提のため
+- Next.js は HTML ファイルに書き出す形（静的エクスポート）ではなく、Node.js のサーバーとして動かす。`/recipes/12` のような URL をそのまま使え、ログインしていない人を画面を出す前にログイン画面へ移せる（F-61）
+- 詳しい構成図（ネットワーク、通信の許可など）は、基本設計の AWS 構成図で作る
 
 ---
 
@@ -81,7 +102,8 @@ HTTPS の付け方（CloudFront など）や、画面と API の分け方は基�
 - [endoflife.date](https://endoflife.date/)（各技術のリリースとサポート期限の一覧）
 - [MySQL on Amazon RDS versions（AWS 公式）](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Concepts.VersionMgmt.html)
 - [Amazon RDS for MySQL supports MySQL 9.7 in Amazon RDS Database Preview Environment（AWS 公式）](https://aws.amazon.com/about-aws/whats-new/2026/07/amazon-rds-mysql-long-term-9-7-rds-database-preview/)
-- npm（TypeScript・Next.js・React の最新版）
+- npm（TypeScript・Next.js・React・Mantine・Vitest・React Testing Library・Playwright の最新版）
+- Packagist（Laravel Sanctum・Pest の最新版）
 
 ---
 
@@ -92,3 +114,4 @@ HTTPS の付け方（CloudFront など）や、画面と API の分け方は基�
 | 0.1 | 2026-11-03 | 作成 |
 | 0.2 | 2026-11-03 | TypeScript を使うことに決定 |
 | 0.3 | 2026-11-03 | 見た目は Mantine を土台にし、調整は CSS Modules で行うことに決定 |
+| 1.0 | 2026-11-03 | ログイン（Sanctum の SPA 認証）、テストの道具、HTTPS（CloudFront）、Next.js の動かし方を決め、本番の構成（3章）を追加。未決定の項目がなくなったので確定 |

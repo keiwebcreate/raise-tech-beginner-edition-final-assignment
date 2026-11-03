@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-04・S-05 レシピ登録・編集｜モックアップ</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .box { padding: 16px; margin-bottom: 20px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .three { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 16px; }
+  .rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+  .line { display: flex; gap: 6px; align-items: flex-start; }
+  .handle { cursor: grab; color: var(--text-dim); padding: 6px 2px; user-select: none; }
+  .num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
+  .line .name { flex: 3; min-width: 0; }
+  .line .qty { flex: 2; min-width: 0; }
+  .line .textarea { flex: 1; min-height: 60px; }
+
+  /* タグ入力（Mantine の TagsInput に相当） */
+  .tags-input { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 36px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  .pill { display: inline-flex; gap: 4px; align-items: center; background: var(--primary-light); color: var(--primary-text); border-radius: 999px; padding: 0 4px 0 10px; font-size: 13px; }
+  .pill button { border: none; background: none; color: inherit; cursor: pointer; }
+  .tags-input input { border: none; outline: none; flex: 1; min-width: 120px; background: transparent; color: var(--text); font: inherit; }
+  .suggest { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); margin-top: 4px; font-size: 14px; }
+  .suggest div { padding: 6px 12px; }
+  .suggest div:first-child { background: var(--primary-light); }
+
+  /* 写真（Mantine の Dropzone に相当） */
+  .drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 24px 16px; text-align: center; color: var(--text-dim); }
+  .drop:hover { border-color: var(--primary); background: var(--primary-light); }
+  .current { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .current .thumb { width: 160px; border-radius: 8px; overflow: hidden; }
+
+  .bottom-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 16px; z-index: 5; }
+  .bottom-inner { max-width: 760px; margin: 0 auto; display: flex; justify-content: flex-end; gap: 8px; }
+  .alert { background: var(--danger-light); border: 1px solid var(--danger); color: var(--danger); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; margin-bottom: 16px; }
+
+  @media (max-width: 640px) {
+    .two, .three { grid-template-columns: 1fr 1fr; }
+    .three .field:first-child { grid-column: 1 / -1; }
+    .bottom-inner .btn { flex: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="mock-note">モックアップ S-04 レシピ登録（URL に ?edit を付けると S-05 編集の見本） ｜ <a href="index.html">画面の一覧へ</a></div>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <nav class="header-nav">
+      <a class="btn btn-subtle" href="settings.html">⚙ 設定</a>
+    </nav>
+    <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
+  </div>
+  <div class="mobile-menu">
+    <a href="list.html">レシピ一覧</a>
+    <a href="settings.html">⚙ 設定</a>
+  </div>
+</header>
+
+<main class="container narrow">
+  <h1 class="page-title" id="title">レシピを追加</h1>
+
+  <div class="alert" role="alert">⚠️ 入力に誤りがあります。赤い項目を確かめてください。</div>
+
+  <section class="card box">
+    <h2 class="section-title">基本の情報</h2>
+    <div class="field">
+      <label for="name">料理名<span class="req">*</span></label>
+      <input class="input error" id="name" placeholder="例：肉じゃが">
+      <span class="error-text">料理名を入力してください</span>
+    </div>
+    <div class="three">
+      <div class="field">
+        <label>カテゴリ<span class="req">*</span></label>
+        <select class="select">
+          <option value="">選んでください</option><option selected>主菜</option><option>副菜</option><option>サラダ</option>
+          <option>汁物・スープ</option><option>ご飯もの</option><option>麺類</option><option>パン・粉もの</option>
+          <option>お弁当・おつまみ</option><option>デザート・おやつ</option><option>飲み物</option>
+          <option>たれ・ソース・調味料</option><option>その他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>何人分<span class="req">*</span></label>
+        <input class="input" type="number" min="1" max="99" value="2">
+      </div>
+      <div class="field">
+        <label>調理時間（分）</label>
+        <input class="input" type="number" min="1" max="999" placeholder="30">
+      </div>
+    </div>
+    <div class="field">
+      <label>タグ</label>
+      <div class="tags-input">
+        <span class="pill">和食<button aria-label="和食を外す">✕</button></span>
+        <span class="pill">作り置き<button aria-label="作り置きを外す">✕</button></span>
+        <input placeholder="タグを入力して Enter" value="時">
+      </div>
+      <div class="suggest" aria-label="候補">
+        <div>時短</div>
+        <div>＋「時」を新しいタグとして追加</div>
+      </div>
+      <span class="hint">10個まで。今までに使ったタグが候補に出ます。新しい名前を入れると、新しいタグになります</span>
+    </div>
+  </section>
+
+  <section class="card box">
+    <h2 class="section-title">完成写真</h2>
+    <div class="current" id="current" hidden>
+      <div class="thumb"><div class="photo"></div></div>
+      <div style="display:flex; flex-direction:column; gap:8px">
+        <button class="btn btn-default">写真を変える</button>
+        <button class="btn btn-danger-outline">写真を削除</button>
+      </div>
+    </div>
+    <div class="drop" id="drop">
+      <div style="font-size:32px">📷</div>
+      写真をここにドラッグ＆ドロップ<br>またはクリックして選ぶ
+      <div class="hint" style="margin-top:6px">JPEG・PNG・WebP、5MB まで（なくても登録できます）</div>
+    </div>
+  </section>
+
+  <section class="card box">
+    <h2 class="section-title">材料<span class="req">*</span></h2>
+    <div class="rows">
+      <div class="line"><span class="handle" title="ドラッグで並び替え">⋮⋮</span><input class="input name" value="じゃがいも" placeholder="材料名"><input class="input qty" value="3個" placeholder="分量"><button class="btn btn-subtle btn-icon" aria-label="この行を削除">✕</button></div>
+      <div class="line"><span class="handle">⋮⋮</span><input class="input name" value="牛こま切れ肉"><input class="input qty" value="200g"><button class="btn btn-subtle btn-icon" aria-label="この行を削除">✕</button></div>
+      <div class="line"><span class="handle">⋮⋮</span><input class="input name" placeholder="材料名（例：玉ねぎ）"><input class="input qty" placeholder="分量（例：1個）"><button class="btn btn-subtle btn-icon" aria-label="この行を削除">✕</button></div>
+    </div>
+    <button class="btn btn-light">＋ 材料を追加</button>
+    <p class="hint">50行まで。「少々」「適量」のような書き方もできます。左の ⋮⋮ をドラッグで並び替え</p>
+  </section>
+
+  <section class="card box">
+    <h2 class="section-title">作り方<span class="req">*</span></h2>
+    <div class="rows">
+      <div class="line"><span class="handle">⋮⋮</span><span class="num">1</span><textarea class="textarea">じゃがいもは皮をむいて4等分に切り、水にさらす。</textarea><button class="btn btn-subtle btn-icon" aria-label="この手順を削除">✕</button></div>
+      <div class="line"><span class="handle">⋮⋮</span><span class="num">2</span><textarea class="textarea" placeholder="手順を入力"></textarea><button class="btn btn-subtle btn-icon" aria-label="この手順を削除">✕</button></div>
+    </div>
+    <button class="btn btn-light">＋ 手順を追加</button>
+  </section>
+
+  <section class="card box">
+    <h2 class="section-title">メモ</h2>
+    <textarea class="textarea" placeholder="コツや次に作るときの注意など（2000文字まで）"></textarea>
+  </section>
+</main>
+
+<div class="bottom-bar">
+  <div class="bottom-inner">
+    <a class="btn btn-default" href="list.html">やめる</a>
+    <button class="btn btn-primary" data-toast="success" data-title="保存しました" data-msg="「肉じゃが」を登録しました">保存する</button>
+    <button class="btn btn-default" data-toast="error" data-title="保存できませんでした" data-msg="通信に失敗しました。時間をおいてもう一度お試しください">（エラー通知の見本）</button>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+  // ?edit なら編集画面（S-05）の見本にする
+  if (location.search.includes('edit') || location.search.includes('copy')) {
+    const copy = location.search.includes('copy');
+    document.getElementById('title').textContent = copy ? 'レシピを編集（複製したレシピ）' : 'レシピを編集';
+    document.title = 'S-05 レシピ編集｜モックアップ';
+    document.getElementById('current').hidden = false;
+    document.getElementById('drop').hidden = true;
+    document.getElementById('name').value = copy ? '肉じゃが（コピー）' : '肉じゃが';
+    document.getElementById('name').classList.remove('error');
+    document.querySelector('.error-text').remove();
+    document.querySelector('.alert').remove();
+  }
+</script>
+</body>
+</html>
