@@ -18,7 +18,7 @@
 | [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
 | [database-design.md](database-design.md)（テーブル設計書） | 1.0 | 確定（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
-| [aws-design.md](aws-design.md)（AWS 構成設計書） | 0.1 | ユーザー確認待ち（11章の「新しく決めたこと」も） |
+| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.0 | 確定（2026-11-03） |
 
 ## GitHub の設定
 
@@ -40,9 +40,14 @@
 - 見た目を frontend-design スキルで作り直し（イシュー #8・PR #9）
 - テーブル設計が完了（イシュー #10）：テーブル設計書 版1.0。よみがなを要件・画面に追加。照合順序の濁点の扱いは詳細設計で MySQL に入れて確かめる
 - API 設計が完了（イシュー #12）：API 設計書 版1.0（A-01〜A-18）
+- AWS 構成設計が完了（イシュー #14）：AWS 構成設計書 版1.0。**基本設計はこれで全部終わり**
 - コードはまだない
 
 ## 次にやること：基本設計の続き
 
-1. AWS 構成図（EC2・RDS・S3・CloudFront）
-2. 詳細設計
+1. 詳細設計（docs/detailed-design.md）：フォルダ構成、処理の流れ、入力チェック、エラー処理、照合順序の濁点の確認、Amazon Linux 2023 で Node.js 26・PHP 8.5 が入るかの確認、デプロイの細かい手順
+2. 環境構築（Docker の MySQL 8.4、Laravel・Next.js のひな形）
+
+## 構築の前に確かめること
+
+- 前のアプリ（beginner_version）で、作業用の IAM ユーザーが組織の制限（SCP）で EC2 などを拒否されていた。同じ AWS アカウントを使うなら、解決しているかを確かめる
