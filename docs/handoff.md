@@ -13,9 +13,10 @@
 
 | 文書 | 版 | 状態 |
 |---|---|---|
-| [requirements.md](requirements.md)（要件定義書） | 1.0 | 確定（2026-11-03） |
+| [requirements.md](requirements.md)（要件定義書） | 1.1 | よみがなを追加（2026-11-03） |
 | [tech-stack.md](tech-stack.md)（技術スタック） | 1.0 | 確定（2026-11-03） |
-| [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.1 | 見た目を frontend-design で作り直し（イシュー #8） |
+| [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
+| [database-design.md](database-design.md)（テーブル設計書） | 0.1 | ユーザー確認待ち（10章の「新しく決めたこと」も） |
 
 ## GitHub の設定
 

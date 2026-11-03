@@ -81,6 +81,11 @@
         <input class="input error" id="name" placeholder="例：肉じゃが">
         <span class="error-text">料理名を入力してください</span>
       </div>
+      <div class="field">
+        <label for="kana">よみがな</label>
+        <input class="input" id="kana" placeholder="例：にくじゃが">
+        <span class="hint">ひらがなで入れると、料理名順の並びと検索に使われます（なくてもよい）</span>
+      </div>
       <div class="three">
         <div class="field">
           <label for="cat">カテゴリ<span class="req">*</span></label>
@@ -177,6 +182,7 @@
     document.getElementById('current').hidden = false;
     document.getElementById('drop').hidden = true;
     document.getElementById('name').value = copy ? '肉じゃが（コピー）' : '肉じゃが';
+    document.getElementById('kana').value = 'にくじゃが';
     document.getElementById('name').classList.remove('error');
     document.querySelector('.error-text').remove();
     document.querySelector('.alert').remove();
