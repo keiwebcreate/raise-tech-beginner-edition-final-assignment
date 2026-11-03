@@ -26,7 +26,7 @@ RaiseTech 初級編の最終課題として、**要件定義から設計・開�
 
 | 区分 | 技術 |
 |---|---|
-| 画面 | Next.js 16・React 19・TypeScript 7・Mantine 9（部品集）・CSS Modules |
+| 画面 | Next.js 16・React 19・TypeScript 7・Mantine 9（部品集）・CSS Modules・TanStack Query 5 |
 | サーバー | PHP 8.5・Laravel 13・Laravel Sanctum（ログイン） |
 | データベース | MySQL 8.4 |
 | テスト | Pest（サーバー）、Vitest・React Testing Library（画面）、Playwright（ブラウザでの通しのテスト） |
