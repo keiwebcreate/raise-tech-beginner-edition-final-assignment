@@ -1,0 +1,11 @@
+# Larastan（PHPStan の Laravel 版）の設定。動かす前に型の誤りなどを見つける（詳細設計書 6.1）
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - routes/
+        - database/
+    # 厳しさ（0〜10）。6から始める
+    level: 6

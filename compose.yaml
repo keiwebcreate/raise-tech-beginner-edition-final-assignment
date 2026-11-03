@@ -1,0 +1,35 @@
+# 開発用の MySQL（詳細設計書 3.4）
+# 起動：docker compose up -d ／ 停止：docker compose stop（データは残る）
+# パスワードは Windows のユーザー環境変数 RECIPE_DB_PASSWORD から読む（Git には書かない）
+name: recipebox
+
+services:
+  mysql:
+    image: mysql:8.4
+    ports:
+      # 自分のパソコンからだけつなげる。3306・3307 はほかで使っているので 3308
+      - "127.0.0.1:3308:3306"
+    environment:
+      MYSQL_DATABASE: recipe_app
+      MYSQL_USER: recipe_app_user
+      MYSQL_PASSWORD: ${RECIPE_DB_PASSWORD:?Windows のユーザー環境変数 RECIPE_DB_PASSWORD を登録してください}
+      # 管理者（root）のパスワードは使わないので、ばらばらの値を自動で作らせる
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      TZ: Asia/Tokyo
+    command:
+      - --character-set-server=utf8mb4
+      # 日本語用の照合順序（詳細設計書 2.1）
+      - --collation-server=utf8mb4_ja_0900_as_cs
+      - --default-time-zone=+09:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # 最初の起動のときだけ動く：テスト用の DB を作る
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u recipe_app_user -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  mysql-data:
