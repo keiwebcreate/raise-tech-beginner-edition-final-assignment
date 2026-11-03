@@ -1,0 +1,277 @@
+/*
+  モックアップ用の共通スタイル。
+  本番は Mantine ＋ CSS Modules で作る。ここでは見た目の確認のため、
+  Mantine の標準の色（orange・gray）と余白に近い値を手で書いている。
+*/
+
+:root {
+  --primary: #fd7e14;          /* Mantine orange.6 */
+  --primary-hover: #e8590c;    /* orange.8 */
+  --primary-light: #fff4e6;    /* orange.0 */
+  --primary-text: #d9480f;     /* orange.9 */
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #212529;
+  --text-dim: #6c757d;
+  --border: #dee2e6;
+  --danger: #fa5252;
+  --danger-light: #fff5f5;
+  --success: #40c057;
+  --star: #fab005;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
+  --radius: 8px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #fd7e14;
+    --primary-hover: #ff922b;
+    --primary-light: #3a2a1c;
+    --primary-text: #ffa94d;
+    --bg: #1a1b1e;
+    --surface: #25262b;
+    --text: #e9ecef;
+    --text-dim: #a6a7ab;
+    --border: #373a40;
+    --danger: #ff6b6b;
+    --danger-light: #3b2224;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+a { color: var(--primary-text); }
+
+/* ---------- モックアップの案内帯 ---------- */
+.mock-note {
+  background: #343a40;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 16px;
+}
+.mock-note a { color: #ffd8a8; }
+
+/* ---------- ヘッダー ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text);
+  text-decoration: none;
+  margin-right: auto;
+  white-space: nowrap;
+}
+.logo span { color: var(--primary); }
+.header-nav { display: flex; align-items: center; gap: 8px; }
+.header .burger { display: none; }
+.mobile-menu { display: none; }
+
+@media (max-width: 640px) {
+  .header-nav { display: none; }
+  .header .burger { display: inline-flex; }
+  .mobile-menu.open {
+    display: block;
+    border-top: 1px solid var(--border);
+    padding: 8px 16px 12px;
+  }
+  .mobile-menu a {
+    display: block;
+    padding: 10px 4px;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* ---------- ボタン ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-light { background: var(--primary-light); color: var(--primary-text); }
+.btn-default { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger-outline { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn-subtle { background: transparent; color: var(--text-dim); }
+.btn-icon { width: 36px; padding: 0; }
+.btn-block { width: 100%; }
+.btn[aria-pressed="true"] { background: var(--primary-light); color: var(--primary-text); border-color: var(--primary); }
+
+/* ---------- 入力欄 ---------- */
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+.field label { font-size: 14px; font-weight: 600; }
+.req { color: var(--danger); margin-left: 2px; }
+.hint { font-size: 12px; color: var(--text-dim); }
+.input, .select, .textarea {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+.textarea { min-height: 80px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+.input.error { border-color: var(--danger); }
+.error-text { font-size: 12px; color: var(--danger); }
+
+/* ---------- 全体の枠 ---------- */
+.container { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+.narrow { max-width: 760px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.page-title { font-size: 24px; margin: 0 0 16px; }
+.section-title { font-size: 18px; margin: 0 0 12px; }
+
+/* ---------- バッジ・タグ ---------- */
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary-text);
+  white-space: nowrap;
+}
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.star { color: var(--star); }
+.star-off { color: var(--text-dim); }
+
+/* ---------- 写真 ---------- */
+.photo {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, #ffd8a8, #ffa94d);
+}
+.no-image {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(45deg, var(--bg), var(--bg) 10px, var(--border) 10px, var(--border) 11px);
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ---------- 通知（Mantine の notifications に相当） ---------- */
+.toast-area {
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+}
+@media (max-width: 640px) {
+  .toast-area { right: 50%; transform: translateX(50%); top: 64px; }
+}
+.toast {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--success);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.toast.error { border-left-color: var(--danger); }
+.toast b { display: block; }
+.toast .close { margin-left: auto; background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px; }
+
+/* ---------- ダイアログ ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+.overlay.open { display: flex; }
+.dialog {
+  background: var(--surface);
+  border-radius: 12px;
+  width: min(440px, 100%);
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
+}
+.dialog h2 { font-size: 18px; margin: 0 0 8px; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* 下から出る窓（スマホの絞り込み） */
+.drawer-overlay { align-items: flex-end; padding: 0; }
+.drawer {
+  background: var(--surface);
+  width: 100%;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px 24px;
+  max-height: 85vh;
+  overflow: auto;
+}

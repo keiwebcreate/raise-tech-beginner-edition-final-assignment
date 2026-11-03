@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-01 ログイン｜モックアップ</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .center { min-height: calc(100vh - 40px); display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+  .login { width: min(400px, 100%); padding: 28px 24px; }
+  .login .logo { display: block; text-align: center; margin: 0 0 4px; font-size: 26px; }
+  .lead { text-align: center; color: var(--text-dim); font-size: 14px; margin: 0 0 24px; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 20px; }
+  .alert { background: var(--danger-light); border: 1px solid var(--danger); color: var(--danger); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="mock-note">モックアップ S-01 ログイン（ヘッダーなし） ｜ <a href="index.html">画面の一覧へ</a></div>
+
+<div class="center">
+  <form class="card login" onsubmit="event.preventDefault(); location.href='list.html'">
+    <span class="logo">🍳 <span style="color:var(--primary)">Recipe</span> Box</span>
+    <p class="lead">自分専用のレシピ帳</p>
+
+    <details style="margin-bottom:12px">
+      <summary class="hint">参考：ログインに失敗したときの表示</summary>
+      <div class="alert" role="alert" style="margin-top:8px">メールアドレスかパスワードが違います。</div>
+      <div class="alert" role="alert">ログインの失敗が続いたため、しばらく受け付けません。1分後にもう一度お試しください。</div>
+    </details>
+
+    <div class="field">
+      <label for="email">メールアドレス</label>
+      <input class="input" id="email" type="email" autocomplete="username" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label for="pw">パスワード</label>
+      <input class="input" id="pw" type="password" autocomplete="current-password">
+    </div>
+    <label class="check"><input type="checkbox" checked> ログイン状態を保持する</label>
+    <button class="btn btn-primary btn-block" style="min-height:42px; font-size:16px">ログイン</button>
+  </form>
+</div>
+</body>
+</html>

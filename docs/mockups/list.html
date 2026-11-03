@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-02 レシピ一覧｜モックアップ</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* 検索・絞り込みの欄 */
+  .filters { padding: 12px; margin-bottom: 16px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filter-row + .filter-row { margin-top: 8px; }
+  .filter-row .input { flex: 1 1 260px; }
+  .filter-row .select { width: auto; flex: 0 1 170px; }
+  .filter-mobile { display: none; }
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .count { color: var(--text-dim); font-size: 14px; margin-right: auto; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--primary-light); color: var(--primary-text); }
+
+  /* タイル表示 */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .tile { overflow: hidden; text-decoration: none; color: inherit; display: block; position: relative; }
+  .tile:hover { outline: 2px solid var(--primary); }
+  .tile-body { padding: 10px 12px 12px; }
+  .tile-title { font-weight: 700; margin: 0 0 4px; font-size: 16px; overflow-wrap: anywhere; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+  .fav { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%;
+         background: rgba(255,255,255,.9); border: none; font-size: 18px; cursor: pointer; }
+
+  /* リスト表示 */
+  .list { display: none; flex-direction: column; }
+  .row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: var(--primary-light); }
+  .row .thumb { width: 72px; flex: none; border-radius: 6px; overflow: hidden; }
+  .row-main { flex: 1; min-width: 0; }
+  .row .tile-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .view-list .grid { display: none; }
+  .view-list .list { display: flex; }
+
+  .pager { display: flex; justify-content: center; gap: 4px; margin-top: 24px; flex-wrap: wrap; }
+  .pager .btn { min-width: 36px; padding: 0 8px; }
+  .empty { text-align: center; padding: 48px 16px; color: var(--text-dim); }
+
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 760px)  { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+  @media (max-width: 640px) {
+    .filter-pc { display: none; }
+    .filter-mobile { display: flex; gap: 8px; }
+    .filter-mobile .input { flex: 1; min-width: 0; }
+    .filters { padding: 0; border: none; box-shadow: none; background: none; }
+    .tile-body { padding: 8px; }
+    .tile-title { font-size: 14px; }
+    .tile .tags { display: none; }
+  }
+  @media (max-width: 359px) { .grid { gap: 8px; } .meta { font-size: 12px; } }
+</style>
+</head>
+<body>
+<div class="mock-note">モックアップ S-02 レシピ一覧 ｜ <a href="index.html">画面の一覧へ</a></div>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="list.html">🍳 <span>Recipe</span> Box</a>
+    <nav class="header-nav">
+      <a class="btn btn-primary" href="form.html">＋ レシピを追加</a>
+      <a class="btn btn-subtle" href="settings.html">⚙ 設定</a>
+    </nav>
+    <button class="btn btn-default btn-icon burger" data-burger aria-label="メニュー" aria-expanded="false">☰</button>
+  </div>
+  <div class="mobile-menu">
+    <a href="form.html">＋ レシピを追加</a>
+    <a href="settings.html">⚙ 設定</a>
+  </div>
+</header>
+
+<main class="container">
+  <!-- 検索・絞り込み（パソコン：横並び） -->
+  <section class="card filters">
+    <div class="filter-pc">
+      <div class="filter-row">
+        <input class="input" type="search" placeholder="🔍 料理名・材料で検索（例：豚肉）" value="">
+      </div>
+      <div class="filter-row">
+        <select class="select" aria-label="カテゴリ">
+          <option>カテゴリ：すべて</option><option selected>主菜</option><option>副菜</option><option>サラダ</option>
+          <option>汁物・スープ</option><option>ご飯もの</option><option>麺類</option><option>パン・粉もの</option>
+          <option>お弁当・おつまみ</option><option>デザート・おやつ</option><option>飲み物</option>
+          <option>たれ・ソース・調味料</option><option>その他</option>
+        </select>
+        <select class="select" aria-label="タグ">
+          <option>タグ：すべて</option><option>和食</option><option>時短</option><option>作り置き</option>
+        </select>
+        <select class="select" aria-label="調理時間">
+          <option>調理時間：指定なし</option><option>15分以内</option><option>30分以内</option><option>60分以内</option>
+        </select>
+        <button class="btn btn-default" aria-pressed="false" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')==='true'?'false':'true')">☆ お気に入りだけ</button>
+        <button class="btn btn-subtle">条件をクリア</button>
+      </div>
+    </div>
+    <!-- スマホ：キーワード＋「絞り込み」ボタン -->
+    <div class="filter-mobile">
+      <input class="input" type="search" placeholder="🔍 料理名・材料で検索">
+      <button class="btn btn-default" data-open="drawer">絞り込み (1)</button>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <span class="count">主菜 ｜ 24件中 1〜20件</span>
+    <select class="select" style="width:auto" aria-label="並び替え">
+      <option>新しい順</option><option>料理名順</option><option>調理時間の短い順</option><option>最後に作った日が古い順</option>
+    </select>
+    <span>
+      <button class="btn btn-default btn-icon" id="v-grid" aria-pressed="true" aria-label="タイル表示" title="タイル表示">▦</button>
+      <button class="btn btn-default btn-icon" id="v-list" aria-pressed="false" aria-label="リスト表示" title="リスト表示">☰</button>
+    </span>
+  </div>
+
+  <div id="results">
+    <!-- タイル表示 -->
+    <div class="grid" id="grid"></div>
+    <!-- リスト表示 -->
+    <div class="list card" id="list"></div>
+  </div>
+
+  <nav class="pager" aria-label="ページ">
+    <button class="btn btn-default" disabled>‹</button>
+    <button class="btn btn-primary">1</button>
+    <button class="btn btn-default">2</button>
+    <button class="btn btn-default">›</button>
+  </nav>
+
+  <details style="margin-top:32px">
+    <summary class="hint">参考：検索結果が0件のときの表示</summary>
+    <div class="card empty" style="margin-top:8px">
+      <div style="font-size:40px">🍽️</div>
+      <p>条件に合うレシピがありません。<br>条件を変えるか、<a href="form.html">新しいレシピを追加</a>してください。</p>
+    </div>
+  </details>
+</main>
+
+<!-- スマホの絞り込み（下から出る窓） -->
+<div class="overlay drawer-overlay" id="drawer">
+  <div class="drawer" role="dialog" aria-label="絞り込み">
+    <h2 class="section-title">絞り込み</h2>
+    <div class="field"><label>カテゴリ</label>
+      <select class="select"><option>すべて</option><option selected>主菜</option><option>副菜</option></select></div>
+    <div class="field"><label>タグ</label>
+      <select class="select"><option>すべて</option><option>和食</option><option>時短</option></select></div>
+    <div class="field"><label>調理時間</label>
+      <select class="select"><option>指定なし</option><option>15分以内</option><option>30分以内</option><option>60分以内</option></select></div>
+    <div class="field"><label><input type="checkbox"> ☆ お気に入りだけ</label></div>
+    <div style="display:flex; gap:8px">
+      <button class="btn btn-default" style="flex:1" data-close>クリア</button>
+      <button class="btn btn-primary" style="flex:2" data-close>この条件で表示</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+  // 見本のデータ（本番は API から取得する）
+  const recipes = [
+    { name: '肉じゃが', cat: '主菜', min: 30, tags: ['和食', '作り置き'], fav: true, photo: true },
+    { name: '鶏の唐揚げ', cat: '主菜', min: 25, tags: ['和食', 'お弁当'], fav: false, photo: true },
+    { name: '豚の生姜焼き', cat: '主菜', min: 15, tags: ['和食', '時短'], fav: true, photo: false },
+    { name: '麻婆豆腐', cat: '主菜', min: 20, tags: ['中華'], fav: false, photo: true },
+    { name: 'サバの味噌煮', cat: '主菜', min: 25, tags: ['和食'], fav: false, photo: true },
+    { name: 'ハンバーグ（デミグラスソース）', cat: '主菜', min: 40, tags: ['洋食', '子ども向け'], fav: true, photo: true },
+    { name: '鮭のムニエル', cat: '主菜', min: 15, tags: ['洋食', '時短'], fav: false, photo: false },
+    { name: '回鍋肉', cat: '主菜', min: 15, tags: ['中華', '時短'], fav: false, photo: true },
+  ];
+  const tagsHtml = (r) => `<div class="tags">${r.tags.map((t) => `<span class="tag">#${t}</span>`).join('')}</div>`;
+  const photoHtml = (r) => r.photo ? `<div class="photo" role="img" aria-label="${r.name}の写真"></div>` : `<div class="no-image">No Image</div>`;
+  const meta = (r) => `<div class="meta"><span class="badge">${r.cat}</span><span>⏱ ${r.min}分</span></div>`;
+
+  document.getElementById('grid').innerHTML = recipes.map((r) => `
+    <a class="card tile" href="detail.html">
+      ${photoHtml(r)}
+      <button class="fav" aria-label="お気に入り" onclick="event.preventDefault()">${r.fav ? '<span class="star">★</span>' : '<span class="star-off">☆</span>'}</button>
+      <div class="tile-body"><p class="tile-title">${r.name}</p>${meta(r)}${tagsHtml(r)}</div>
+    </a>`).join('');
+
+  document.getElementById('list').innerHTML = recipes.map((r) => `
+    <a class="row" href="detail.html">
+      <div class="thumb">${photoHtml(r)}</div>
+      <div class="row-main"><p class="tile-title">${r.name}</p>${meta(r)}${tagsHtml(r)}</div>
+      <span aria-label="お気に入り">${r.fav ? '<span class="star">★</span>' : '<span class="star-off">☆</span>'}</span>
+    </a>`).join('');
+
+  // タイル／リストの切り替え（本番は選んだ形をブラウザに覚えさせる）
+  const results = document.getElementById('results');
+  const vGrid = document.getElementById('v-grid');
+  const vList = document.getElementById('v-list');
+  function setView(v) {
+    results.classList.toggle('view-list', v === 'list');
+    vGrid.setAttribute('aria-pressed', String(v === 'grid'));
+    vList.setAttribute('aria-pressed', String(v === 'list'));
+    try { localStorage.setItem('mock-view', v); } catch (e) {}
+  }
+  vGrid.onclick = () => setView('grid');
+  vList.onclick = () => setView('list');
+  try { setView(localStorage.getItem('mock-view') || 'grid'); } catch (e) { setView('grid'); }
+</script>
+</body>
+</html>
