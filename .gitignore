@@ -1,0 +1,13 @@
+# Claude Code の設定・指示書（個人の作業環境なので Git に入れない）
+.claude/
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 秘密の情報（パスワードなど）
+.env
+.env.*
+!.env.example
