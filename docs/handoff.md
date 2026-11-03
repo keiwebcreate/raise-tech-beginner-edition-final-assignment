@@ -19,7 +19,7 @@
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
 | [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.1 | Node.js 24・照合順序を反映（2026-11-03） |
-| [detailed-design.md](detailed-design.md)（詳細設計書） | 0.1 | ユーザー確認待ち（9章の「新しく決めたこと」も） |
+| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.0 | 確定（2026-11-03） |
 
 ## GitHub の設定
 
@@ -42,12 +42,17 @@
 - テーブル設計が完了（イシュー #10）：テーブル設計書 版1.0。よみがなを要件・画面に追加。照合順序の濁点の扱いは詳細設計で MySQL に入れて確かめる
 - API 設計が完了（イシュー #12）：API 設計書 版1.0（A-01〜A-18）
 - AWS 構成設計が完了（イシュー #14）：AWS 構成設計書 版1.0。**基本設計はこれで全部終わり**
+- 詳細設計が完了（イシュー #16）：詳細設計書 版1.0。照合順序を `utf8mb4_ja_0900_as_cs` に、Node.js を 24 に変更（MySQL・Amazon Linux で確かめた結果）
 - コードはまだない
 
-## 次にやること：基本設計の続き
+## 次にやること：環境構築（詳細設計書 3章）
 
-1. 詳細設計（docs/detailed-design.md）：フォルダ構成、処理の流れ、入力チェック、エラー処理、照合順序の濁点の確認、Amazon Linux 2023 で Node.js 26・PHP 8.5 が入るかの確認、デプロイの細かい手順
-2. 環境構築（Docker の MySQL 8.4、Laravel・Next.js のひな形）
+1. パソコンの準備（ユーザー）：Laravel Herd で PHP 8.5 を選ぶ（`intl`・`gd` が有効か確認）、fnm を入れて Node.js 24 を入れる、Windows のユーザー環境変数 `RECIPE_DB_PASSWORD` を登録する
+2. `compose.yaml`（MySQL 8.4・3308・`utf8mb4_ja_0900_as_cs`）
+3. Laravel 13 のひな形（`backend/`）：Sanctum・Pest・Pint・Larastan
+4. Next.js 16 のひな形（`frontend/`）：Mantine・TanStack Query・Biome・Vitest・Playwright、`/api` の転送
+5. GitHub Actions（`ci.yml`）と、main の保護に「CI の成功」を足す
+6. その後、機能ごとに実装（イシュー → ブランチ → PR）
 
 ## 構築の前に確かめること
 
