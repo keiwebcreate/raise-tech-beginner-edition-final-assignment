@@ -4,14 +4,24 @@
   --app-board: #f4f5f1; /* まな板（背景） */
   --app-paper: #ffffff; /* 紙（内容を載せる面） */
   --app-rule: #dfe2db; /* 区切りの線 */
+  --app-rule-strong: #c5cac1; /* 濃い区切りの線 */
   --app-ink-dim: #5b6871; /* 補足の文字 */
+  --app-mikan-deep: #c96a00; /* 蜜柑・濃（手順の番号、リンク） */
+  --app-mikan-wash: #fdf0e0; /* 蜜柑の薄い背景 */
+  --app-wakana: #4e8a3e; /* 若菜（作った記録の回数） */
+  --app-font-display:
+    var(--font-display), "Hiragino Maru Gothic ProN", sans-serif;
 }
 
 [data-mantine-color-scheme="dark"] {
   --app-board: #1b2228;
   --app-paper: #222b32;
   --app-rule: #34404a;
+  --app-rule-strong: #46535e;
   --app-ink-dim: #a3adb3;
+  --app-mikan-deep: #ff9d2e;
+  --app-mikan-wash: #3a2a17;
+  --app-wakana: #7fbf6a;
 }
 
 body {

@@ -1,0 +1,45 @@
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  border-radius: 6px;
+  background: var(--app-paper);
+}
+
+/* 持ち上げている行は、本当に浮いているので影を付ける */
+.row[data-dragging="true"] {
+  box-shadow: 0 8px 24px rgb(20 30 38 / 18%);
+}
+
+.handle {
+  flex: none;
+  width: 28px;
+  min-height: 42px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--app-ink-dim);
+  font-size: 16px;
+  letter-spacing: -2px;
+  cursor: grab;
+  /* スマホで、つまみを触ったときに画面が動かないようにする */
+  touch-action: none;
+  user-select: none;
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handle:focus-visible {
+  outline: 2px solid var(--mantine-color-mikan-6);
+  outline-offset: 1px;
+}

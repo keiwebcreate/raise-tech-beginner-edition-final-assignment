@@ -11,7 +11,10 @@ export function render(ui: ReactElement) {
   });
   return baseRender(
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme}>{ui}</MantineProvider>
+      {/* env="test"：ダイアログなどの動きを止めて、すぐに表示する */}
+      <MantineProvider theme={theme} env="test">
+        {ui}
+      </MantineProvider>
     </QueryClientProvider>,
   );
 }

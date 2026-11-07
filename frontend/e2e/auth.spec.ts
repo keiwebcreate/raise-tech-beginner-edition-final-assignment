@@ -1,22 +1,7 @@
-import { expect, type Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { alertWith, OWNER, submitLogin } from "./helpers";
 
-// ログインの通しのテスト（要件 F-51・F-61・F-62・N-25）。
-// 持ち主は先に作っておく。CI は ci.yml で作る。手元で動かすときは README を参照
-const OWNER = {
-  email: process.env.E2E_OWNER_EMAIL ?? "e2e-owner@example.com",
-  password: process.env.E2E_OWNER_PASSWORD ?? "e2e-password-1234",
-};
-
-async function submitLogin(page: Page, email: string, password: string) {
-  await page.getByLabel("メールアドレス").fill(email);
-  await page.getByLabel("パスワード").fill(password);
-  await page.getByRole("button", { name: "ログイン" }).click();
-}
-
-// Next.js も読み上げ用の空の role="alert" を置くので、文言で絞って探す
-function alertWith(page: Page, text: string) {
-  return page.getByRole("alert").filter({ hasText: text });
-}
+// ログインの通しのテスト（要件 F-51・F-61・F-62・N-25）
 
 test("ログインしていないと、ログイン画面に移り、開こうとした画面の URL を覚える", async ({
   page,
