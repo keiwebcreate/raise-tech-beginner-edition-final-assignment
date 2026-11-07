@@ -112,8 +112,11 @@ Windows 11 で作っています。くわしくは [詳細設計書 3章](docs/d
    php85 "$env:USERPROFILE\.config\herd\bin\composer.phar" install
    Copy-Item .env.example .env
    php85 artisan key:generate
-   php85 artisan migrate
+   php85 artisan migrate --seed
+   php85 artisan app:create-owner
    ```
+
+   最後のコマンドは、ログインに使う持ち主のアカウントを作ります（メールアドレスとパスワードを聞かれます。アカウントは1つだけ）。
 
 4. Next.js の準備（`frontend/`）
 
@@ -140,7 +143,7 @@ Windows 11 で作っています。くわしくは [詳細設計書 3章](docs/d
 | Laravel の書き方（Pint）・型（Larastan） | `php85 vendor/bin/pint --test`・`php85 vendor/bin/phpstan analyse` |
 | Next.js のテスト（Vitest） | `npm test` |
 | Next.js の書き方・型（Biome・TypeScript） | `npm run lint`・`npm run typecheck` |
-| 通しのテスト（Playwright） | `npx playwright install`（最初の1回）→ 3つを起動して `npm run e2e` |
+| 通しのテスト（Playwright） | `npx playwright install`（最初の1回）→ 3つを起動し、環境変数 `E2E_OWNER_EMAIL`・`E2E_OWNER_PASSWORD` に持ち主のメールアドレスとパスワードを入れて `npm run e2e` |
 
 ## 作った人
 

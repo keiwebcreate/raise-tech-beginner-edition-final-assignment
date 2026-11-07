@@ -1,0 +1,31 @@
+.center {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* 内容を載せる「紙」（画面設計書 3.3） */
+.sheet {
+  width: min(400px, 100%);
+  padding: 28px 24px;
+  background: var(--app-paper);
+  border: 1px solid var(--app-rule);
+  border-radius: 12px;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.lead {
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--app-ink-dim);
+}

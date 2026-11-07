@@ -1,0 +1,15 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display), "Hiragino Maru Gothic ProN", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.mark {
+  width: 0.7em;
+  height: 1em;
+  background: var(--mantine-color-mikan-6);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+}
