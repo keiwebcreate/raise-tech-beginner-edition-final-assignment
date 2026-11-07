@@ -11,6 +11,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class CookingLogResource extends JsonResource
 {
+    // 1件のときは data で包まない（API 設計書 A-17）
+    public static $wrap = null;
+
     /**
      * @return array<string, mixed>
      */

@@ -1,7 +1,12 @@
-import { keepPreviousData, queryOptions } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  type QueryClient,
+  queryOptions,
+} from "@tanstack/react-query";
 import { apiFetch } from "@/shared/api/client";
 import type {
   Category,
+  CookingLog,
   Paginated,
   Recipe,
   RecipeListItem,
@@ -44,6 +49,44 @@ export function recipeQuery(id: number) {
     // エラーは画面（S-07）で知らせるので、通知は出さない
     queryFn: () => apiFetch<Recipe>(`/api/recipes/${id}`, { quiet: true }),
   });
+}
+
+export function cookingLogsQuery(recipeId: number) {
+  return queryOptions({
+    queryKey: ["cooking-logs", recipeId],
+    queryFn: async () =>
+      (
+        await apiFetch<{ data: CookingLog[] }>(
+          `/api/recipes/${recipeId}/cooking-logs`,
+        )
+      ).data,
+  });
+}
+
+export function createCookingLog(
+  recipeId: number,
+  data: { cooked_on: string | null; note: string },
+) {
+  return apiFetch<CookingLog>(`/api/recipes/${recipeId}/cooking-logs`, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export function deleteCookingLog(id: number) {
+  return apiFetch<void>(`/api/cooking-logs/${id}`, { method: "DELETE" });
+}
+
+// 作った記録を変えたら、回数・最後に作った日・並び順も変わるので取り直す（詳細設計書 5.5）
+export function refreshAfterCookingLogChange(
+  queryClient: QueryClient,
+  recipeId: number,
+) {
+  queryClient.invalidateQueries({ queryKey: recipeQuery(recipeId).queryKey });
+  queryClient.invalidateQueries({
+    queryKey: cookingLogsQuery(recipeId).queryKey,
+  });
+  queryClient.invalidateQueries({ queryKey: ["recipes"] });
 }
 
 export function setFavorite(id: number, isFavorite: boolean) {

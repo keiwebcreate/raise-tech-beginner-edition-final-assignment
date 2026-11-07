@@ -10,11 +10,12 @@ import { useEffect, useRef } from "react";
 import { ApiError } from "@/shared/api/client";
 import type { Recipe } from "@/shared/api/types";
 import { copyRecipe, deleteRecipe, recipeQuery, tagsQuery } from "./api";
+import { CookedButton } from "./CookedButton";
 import { FavoriteButton } from "./FavoriteButton";
 import { useListHref } from "./lastListSearch";
 import classes from "./RecipeActions.module.css";
 
-// 詳細の操作のボタンと、確認の窓（D-01 削除・D-04 複製）。「作った」は作った記録のイシューで足す
+// 詳細の操作のボタンと、確認の窓（D-01 削除・D-04 複製）
 export function RecipeActions({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -71,6 +72,7 @@ export function RecipeActions({ recipe }: { recipe: Recipe }) {
   return (
     <div className={classes.actions}>
       <FavoriteButton recipe={recipe} withLabel />
+      <CookedButton recipeId={id} />
       <Button variant="default" component={Link} href={`/recipes/${id}/edit`}>
         編集
       </Button>

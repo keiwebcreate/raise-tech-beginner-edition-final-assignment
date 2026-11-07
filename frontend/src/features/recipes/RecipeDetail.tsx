@@ -3,6 +3,7 @@
 import { Skeleton } from "@mantine/core";
 import Link from "next/link";
 import type { Recipe } from "@/shared/api/types";
+import { CookingSection } from "./CookingSection";
 import { useListHref } from "./lastListSearch";
 import { NoImage } from "./NoImage";
 import { RecipeActions } from "./RecipeActions";
@@ -121,49 +122,9 @@ function RecipeSheet({ recipe }: { recipe: Recipe }) {
             </section>
           )}
 
-          <CookingSection cooking={recipe.cooking} />
+          <CookingSection recipeId={recipe.id} cooking={recipe.cooking} />
         </div>
       </div>
     </article>
   );
-}
-
-function CookingSection({ cooking }: { cooking: Recipe["cooking"] }) {
-  return (
-    <section className={classes.sub}>
-      <div className={classes.cookHead}>
-        <h2 className={classes.sectionTitle}>作った記録</h2>
-        {cooking.count > 0 && cooking.last_cooked_on && (
-          <>
-            <span className={classes.cookStat}>
-              <b>{cooking.count}</b>回
-            </span>
-            <span className={classes.cookStat}>
-              最後に作った日 <b>{shortDate(cooking.last_cooked_on)}</b>
-            </span>
-          </>
-        )}
-      </div>
-      {cooking.count === 0 ? (
-        <p className={classes.empty}>まだありません</p>
-      ) : (
-        <ul className={classes.records}>
-          {cooking.recent_logs.map((log) => (
-            <li key={log.id}>
-              <time dateTime={log.cooked_on}>
-                {log.cooked_on.replaceAll("-", "/")}
-              </time>
-              <p>{log.note}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
-// 2026-11-03 → 11/3
-function shortDate(date: string): string {
-  const [, month, day] = date.split("-");
-  return `${Number(month)}/${Number(day)}`;
 }
