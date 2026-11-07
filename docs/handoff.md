@@ -46,6 +46,7 @@
 - 詳細設計が完了（イシュー #16）：詳細設計書 版1.0。照合順序を `utf8mb4_ja_0900_as_cs` に、Node.js を 24 に変更（MySQL・Amazon Linux で確かめた結果）
 - 環境構築が完了（イシュー #18）：開発用の MySQL、Laravel 13・Next.js 16 のひな形、テストとチェックの道具
 - 自動テストが完了（イシュー #20）：`ci.yml`（backend・frontend・e2e）と、main の保護への追加。型チェックは `npm run typecheck` を使う（`next typegen` で Next.js の型を作ってから `tsc` を動かす）
+- 使わないひな形のファイルを削除（イシュー #22）：Laravel の画面用のファイル、Next.js の見本の画像、ひな形の README
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -54,7 +55,8 @@
 - Node.js は fnm。`frontend/.node-version` に 24。fnm の既定は system（前のアプリの Node.js 26）。Claude のシェルでは `fnm exec --using=24 npm.cmd ...`
 - DB のパスワードは Windows のユーザー環境変数 `RECIPE_DB_PASSWORD`。前のアプリ用の `DB_PASSWORD`（ユーザー環境変数）があるので、`config/database.php` は `RECIPE_DB_PASSWORD` を先に読む。`php artisan serve` に渡すため `AppServiceProvider` で `ServeCommand::$passthroughVariables` に足した
 - Claude は `.env` を読めない（`C:\dev\Raise_Tech\.claude\settings.json` の deny）。`.env.example` は読める
-- Claude の権限ではファイルの削除（`rm`・`Remove-Item`）ができない。Laravel のひな形に残っている画面用のファイル（`backend/package.json`・`vite.config.js`・`resources/css`・`resources/js`）と、Next.js の見本の画像（`frontend/public/*.svg`）は使わない。消すかどうかはユーザーと相談
+- Claude の権限では `rm`・`Remove-Item` でのファイルの削除ができない。Git で管理しているファイルは `git rm` で消せる
+- `frontend/AGENTS.md` は `next dev` が自動で作り直すので、消さない
 
 ## 次にやること
 
