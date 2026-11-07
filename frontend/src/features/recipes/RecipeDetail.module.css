@@ -26,8 +26,19 @@
   border-bottom: 1px solid var(--app-rule);
 }
 
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
 .name {
-  margin: 0 0 8px;
+  flex: 1 1 280px;
+  min-width: 0;
+  margin: 0;
   font-family: var(--app-font-display);
   font-size: 32px;
   font-weight: 700;

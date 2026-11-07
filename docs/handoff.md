@@ -51,6 +51,7 @@
 - テーブルとシーダーが完了（イシュー #26）：テーブル7つ・モデル・ファクトリ（テスト用のデータを作る部品）・カテゴリ12個。`DatabaseSeeder` は持ち主を作らない（F-54 のコマンドで作る）
 - 持ち主の作成とログインが完了（イシュー #28）：`app:create-owner`、A-02・A-04、`shared/api/client.ts`、S-01、`proxy.ts`。ログアウト（F-52）とパスワード変更（F-53）は「設定」のイシューで作る
 - レシピの登録と詳細が完了（イシュー #30）：`TextNormalizer`、A-06・A-07・A-09・A-10、`SaveRecipeAction`、共通のヘッダー、S-03（表示だけ）、S-04、S-07。写真の欄と詳細の操作ボタン、ヘッダーの「設定」はそれぞれのイシューで足す
+- レシピ一覧・検索・お気に入りが完了（イシュー #32）：A-08・A-13・A-14、`RecipeQuery`、S-02、★（一覧と詳細）、検索条件と URL の変換、「一覧に戻る」で条件を戻す動き。写真は「写真」のイシューで足す
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -64,11 +65,12 @@
 - 開発用の DB には、ユーザーの依頼で確認用の持ち主 `owner@example.com` を作った（パスワードは Git に書かない。ユーザーに伝え済み）。アカウントは1つだけなので、`app:create-owner` は断られる
 - 開発用の DB には、確認で作ったレシピが入っている（`肉じゃが` など）。消してよい
 - 手元に Playwright のブラウザを入れていないので、通しのテストは入っている Chrome で動かす（`node_modules/.cache/pw-local.config.cjs`。Git に入らない。消えたら作り直す）。WebKit・Firefox は CI で確かめる
+- 通しのテストを手元で動かすときは、開発用の DB にレシピが増えないよう `recipe_app_test` につなぐ。`php85 artisan serve` は環境変数の `DB_DATABASE` を子プロセスに渡さないので、`$env:DB_DATABASE='recipe_app_test'` のあと、`backend/public` の中で `php85 -S 127.0.0.1:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php` を実行して起動する。Pest を動かすと空になるので、そのあとカテゴリのシーダーとテスト用の持ち主を入れ直す
 - `claude-security` のスキャンには Workflow ツールが要る。使えないセッションでは `security-review` で見直す
 
 ## 次にやること
 
-1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
+1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：編集・削除・複製 → 写真 → 作った記録 → 設定
 
 ## 構築の前に確かめること
 

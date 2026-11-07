@@ -7,11 +7,14 @@ import { notFound } from "next/navigation";
 import { ApiError } from "@/shared/api/client";
 import type { Recipe } from "@/shared/api/types";
 import { recipeQuery } from "./api";
+import { FavoriteButton } from "./FavoriteButton";
+import { useListHref } from "./lastListSearch";
 import classes from "./RecipeDetail.module.css";
 
-// S-03 レシピ詳細（画面設計書 4章）。操作のボタンは、それぞれの機能のイシューで足す
+// S-03 レシピ詳細（画面設計書 4章）。残りの操作のボタンは、それぞれの機能のイシューで足す
 export function RecipeDetail({ id }: { id: number }) {
   const { data: recipe, error } = useQuery(recipeQuery(id));
+  const listHref = useListHref();
 
   if (error) {
     if (error instanceof ApiError && error.status === 404) {
@@ -25,7 +28,7 @@ export function RecipeDetail({ id }: { id: number }) {
 
   return (
     <main className={classes.container}>
-      <Link href="/" className={classes.back}>
+      <Link href={listHref} className={classes.back}>
         一覧に戻る
       </Link>
       {recipe ? (
@@ -41,7 +44,10 @@ function RecipeSheet({ recipe }: { recipe: Recipe }) {
   return (
     <article className={classes.sheet}>
       <header className={classes.head}>
-        <h1 className={classes.name}>{recipe.name}</h1>
+        <div className={classes.titleRow}>
+          <h1 className={classes.name}>{recipe.name}</h1>
+          <FavoriteButton recipe={recipe} withLabel />
+        </div>
         <div className={classes.meta}>
           <span className={classes.category}>{recipe.category.name}</span>
           {recipe.cook_minutes !== null && (

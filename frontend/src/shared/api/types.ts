@@ -18,6 +18,31 @@ export type CookingLog = {
   note: string | null;
 };
 
+// ページ分けされた一覧の形（API 設計書 1.4）
+export type Paginated<T> = {
+  data: T[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+  };
+};
+
+// 一覧の1件（A-08）
+export type RecipeListItem = {
+  id: number;
+  name: string;
+  category: Category;
+  cook_minutes: number | null;
+  tags: Tag[];
+  is_favorite: boolean;
+  thumb_url: string | null;
+  last_cooked_on: string | null;
+};
+
 export type Recipe = {
   id: number;
   name: string;

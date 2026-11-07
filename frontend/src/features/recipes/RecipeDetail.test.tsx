@@ -1,4 +1,5 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Component, type ReactNode } from "react";
 import { beforeEach, expect, it, vi } from "vitest";
 import { ApiError, apiFetch } from "@/shared/api/client";
@@ -46,6 +47,7 @@ const recipe: Recipe = {
 beforeEach(() => {
   notFound.mockClear();
   apiFetchMock.mockReset();
+  sessionStorage.clear();
 });
 
 it("レシピの内容を表示する", async () => {
@@ -70,6 +72,68 @@ it("レシピの内容を表示する", async () => {
   expect(lists[0]).toHaveTextContent("じゃがいも3個");
   expect(lists[0]).toHaveTextContent("塩");
   expect(lists[1].querySelectorAll("li")[1]).toHaveTextContent("煮る");
+});
+
+it("「一覧に戻る」は、最後に見ていた一覧の条件に戻す", async () => {
+  sessionStorage.setItem("recipe-box:list-search", "?q=%E8%B1%9A&page=2");
+  apiFetchMock.mockResolvedValueOnce(recipe);
+
+  render(<RecipeDetail id={12} />);
+
+  await screen.findByRole("heading", { level: 1, name: "肉じゃが" });
+  expect(screen.getByRole("link", { name: "一覧に戻る" })).toHaveAttribute(
+    "href",
+    "/?q=%E8%B1%9A&page=2",
+  );
+});
+
+it("覚えていた値に決まりに合わないものがあれば、取り除く", async () => {
+  sessionStorage.setItem("recipe-box:list-search", "?next=//evil.example");
+  apiFetchMock.mockResolvedValueOnce(recipe);
+
+  render(<RecipeDetail id={12} />);
+
+  await screen.findByRole("heading", { level: 1, name: "肉じゃが" });
+  expect(screen.getByRole("link", { name: "一覧に戻る" })).toHaveAttribute(
+    "href",
+    "/",
+  );
+});
+
+it("★ を押すと、先に表示を変えてサーバーへ送る", async () => {
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  const user = userEvent.setup();
+  render(<RecipeDetail id={12} />);
+
+  const star = await screen.findByRole("button", { name: "お気に入り" });
+  expect(star).toHaveAttribute("aria-pressed", "false");
+
+  // サーバーの返事を止めておく
+  apiFetchMock.mockImplementation(() => new Promise(() => {}));
+  await user.click(star);
+
+  await waitFor(() => expect(star).toHaveAttribute("aria-pressed", "true"));
+  expect(apiFetchMock).toHaveBeenCalledWith("/api/recipes/12/favorite", {
+    method: "PUT",
+  });
+});
+
+it("★ の保存に失敗したら、表示を戻す", async () => {
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  const user = userEvent.setup();
+  render(<RecipeDetail id={12} />);
+
+  const star = await screen.findByRole("button", { name: "お気に入り" });
+  apiFetchMock.mockRejectedValueOnce(new ApiError(500, "エラーが起きました"));
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  await user.click(star);
+
+  await waitFor(() =>
+    expect(apiFetchMock).toHaveBeenCalledWith("/api/recipes/12/favorite", {
+      method: "PUT",
+    }),
+  );
+  await waitFor(() => expect(star).toHaveAttribute("aria-pressed", "false"));
 });
 
 it("メモは文字のまま出す（HTML として動かさない）", async () => {
