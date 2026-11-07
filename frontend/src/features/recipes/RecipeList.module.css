@@ -165,8 +165,14 @@
   border-radius: 10px;
 }
 
+/* 長い料理名は2行までにする。全文はマウスを乗せると出る（title 属性） */
 .title {
+  display: -webkit-box;
   margin: 10px 0 4px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   font-family: var(--app-font-display);
   font-size: 17px;
   font-weight: 700;
