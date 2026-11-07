@@ -231,7 +231,7 @@ sequenceDiagram
 |---|---|---|
 | 1 | VPC・サブネット・セキュリティグループ・EC2（Session Manager で入れる） | Session Manager で EC2 に入れる |
 | 2 | RDS・S3・Parameter Store・EC2 の役割 | EC2 から DB につながる。S3 に書ける |
-| 3 | GitHub Actions のデプロイ（OIDC の役割） | main にマージすると、EC2 で新しい版が動く |
+| 3 | GitHub Actions のデプロイ（デプロイ専用の IAM ユーザー） | main にマージすると、EC2 で新しい版が動く |
 | 4 | CloudFront | `https://xxxx.cloudfront.net` でログイン画面が出る。EC2 を直接開いても使えない |
 
 ---
@@ -241,7 +241,7 @@ sequenceDiagram
 | 要件 | どこで満たすか |
 |---|---|
 | N-21 HTTPS | CloudFront（5.1）。EC2 は CloudFront からしか受けない（4章） |
-| N-26 秘密の情報を Git に入れない | Parameter Store（5.5）、GitHub Actions は OIDC（6章）、state は Git に入れない |
+| N-26 秘密の情報を Git に入れない | Parameter Store（5.5）、GitHub Actions の鍵は GitHub の秘密の情報（6章）、state は Git に入れない |
 | N-31 バックアップ7日分 | RDS の自動バックアップ（5.3） |
 | N-34 費用 | 8章 |
 
@@ -273,4 +273,4 @@ sequenceDiagram
 | 1.2 | 2026-11-07 | リージョンを東京からシドニーに変更（組織の制限のため）。OIDC が使えない見込みを6章に記載 |
 | 1.3 | 2026-11-07 | 段階2の実装に合わせて、5.5（パスワードを state に残さない書き方、パラメータの名前、DB のユーザー）を更新 |
 | 1.4 | 2026-11-07 | 段階3の実装に合わせて、5.5（`APP_KEY` の作り方）・6章（OIDC からデプロイ専用の IAM ユーザーに変更）を更新 |
-| 1.5 | 2026-11-07 | 段階4の実装に合わせて、5.5（秘密のヘッダーの値）を更新 |
+| 1.5 | 2026-11-07 | 段階4の実装に合わせて、5.5（秘密のヘッダーの値）・9章・10章を更新 |
