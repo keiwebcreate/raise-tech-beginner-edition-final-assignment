@@ -24,6 +24,9 @@ return [
     'string' => ':attributeは文字で入力してください',
 
     'custom' => [
+        'current_password' => [
+            'current_password' => '今のパスワードが違います',
+        ],
         'cooked_on' => [
             'required' => '作った日を選んでください',
             'date_format' => '作った日の形が正しくありません',

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -19,6 +21,17 @@ class AuthController extends Controller
 
         // 他人に番号を仕込まれる攻撃を防ぐため、セッションの番号を作り直す
         $request->session()->regenerate();
+
+        return response()->noContent();
+    }
+
+    // A-03 ログアウト。セッションを消し、合言葉も作り直す
+    public function logout(Request $request): Response
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->noContent();
     }

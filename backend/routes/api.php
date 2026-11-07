@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::get('/me', [MeController::class, 'show']);
+    Route::put('/me/password', [MeController::class, 'updatePassword']);
 
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/tags', [TagController::class, 'index']);

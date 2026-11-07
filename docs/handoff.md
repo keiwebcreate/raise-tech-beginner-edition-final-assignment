@@ -19,7 +19,7 @@
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
 | [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.1 | Node.js 24・照合順序を反映（2026-11-03） |
-| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.3 | レシピの登録の実装に合わせて追記（2026-11-07） |
+| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.7 | 設定の実装に合わせて追記（2026-11-07） |
 
 ## GitHub の設定
 
@@ -55,6 +55,7 @@
 - レシピの編集・削除・複製が完了（イシュー #34）：A-11・A-12・A-15、`DeleteRecipeAction`・`CopyRecipeAction`、S-05、D-01・D-04、詳細のボタン。
 - レシピの完成写真が完了（イシュー #40）：`RecipePhotoStorage`、A-08〜A-12・A-15 の写真、フォームの写真の欄、「No Image」の画像（`NoImage.tsx`、SVG）。本番の S3 の設定は公開のイシューで行う
 - 作った記録が完了（イシュー #42）：A-16〜A-18、D-02・D-03、詳細の「作った」ボタンと記録の欄
+- 設定が完了（イシュー #44）：A-03・A-05、S-06、ヘッダーの「設定」。**要件の機能はこれで全部**
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -69,11 +70,12 @@
 - 開発用の DB には、確認で作ったレシピが入っている（`肉じゃが` など）。消してよい
 - 手元に Playwright のブラウザを入れていないので、通しのテストは入っている Chrome で動かす（`node_modules/.cache/pw-local.config.cjs`。Git に入らない。消えたら作り直す）。WebKit・Firefox は CI で確かめる
 - 通しのテストを手元で動かすときは、開発用の DB にレシピが増えないよう `recipe_app_test` につなぐ。`$env:DB_DATABASE='recipe_app_test'` のあと `backend/serve.ps1` で起動する（`php85 artisan serve` は環境変数の `DB_DATABASE` を子プロセスに渡さないので使えない）。テストで保存した写真は `backend/storage/app/private/recipes/` に残る（Git に入らない）。Pest を動かすと空になるので、そのあとカテゴリのシーダーとテスト用の持ち主を入れ直す
+- `password.spec.ts` は持ち主のパスワードを変えて、最後に元へ戻す。途中で失敗すると変わったままになるので、そのときはテスト用の持ち主を入れ直す
 - `claude-security` のスキャンには Workflow ツールが要る。使えないセッションでは `security-review` で見直す
 
 ## 次にやること
 
-1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：設定
+1. AWS への公開（AWS 構成設計書）。下の「構築の前に確かめること」を先に見る
 
 ## 構築の前に確かめること
 
