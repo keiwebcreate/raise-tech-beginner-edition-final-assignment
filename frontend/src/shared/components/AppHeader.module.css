@@ -25,6 +25,12 @@
   white-space: nowrap;
 }
 
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .burger {
   display: none;
 }
