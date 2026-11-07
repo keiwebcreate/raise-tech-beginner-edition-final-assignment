@@ -25,6 +25,7 @@ import type {
 import { categoriesQuery, recipesQuery, tagsQuery } from "./api";
 import { FavoriteButton } from "./FavoriteButton";
 import { rememberListSearch } from "./lastListSearch";
+import { NoImage } from "./NoImage";
 import classes from "./RecipeList.module.css";
 import {
   countFilters,
@@ -567,7 +568,7 @@ function RecipeTile({ recipe }: { recipe: RecipeListItem }) {
         prefetch={false}
         className={classes.link}
       >
-        <NoImage />
+        <Thumbnail url={recipe.thumb_url} />
         <h2 className={classes.title} title={recipe.name}>
           {recipe.name}
         </h2>
@@ -590,7 +591,7 @@ function RecipeRow({ recipe }: { recipe: RecipeListItem }) {
         className={classes.rowLink}
       >
         <div className={classes.thumb}>
-          <NoImage />
+          <Thumbnail url={recipe.thumb_url} compact />
         </div>
         <div className={classes.rowMain}>
           <h2 className={classes.rowTitle} title={recipe.name}>
@@ -605,9 +606,21 @@ function RecipeRow({ recipe }: { recipe: RecipeListItem }) {
   );
 }
 
-// 写真は写真のイシューで足す
-function NoImage() {
-  return <div className={classes.noImage}>写真なし</div>;
+// 一覧用に縮小した写真（N-12）。料理名がすぐ隣にあるので、読み上げ用の文言は付けない
+function Thumbnail({
+  url,
+  compact = false,
+}: {
+  url: string | null;
+  compact?: boolean;
+}) {
+  if (url === null) {
+    return <NoImage compact={compact} />;
+  }
+  return (
+    // biome-ignore lint/performance/noImgElement: サーバーで縮小済みで、期限付きの URL なので Next.js の変換を通さない
+    <img className={classes.photo} src={url} alt="" loading="lazy" />
+  );
 }
 
 function Meta({ recipe }: { recipe: RecipeListItem }) {

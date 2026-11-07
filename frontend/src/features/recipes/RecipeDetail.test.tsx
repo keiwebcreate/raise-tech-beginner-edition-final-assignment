@@ -66,7 +66,9 @@ it("レシピの内容を表示する", async () => {
   expect(screen.getByText("30")).toBeInTheDocument();
   expect(screen.getByText("#和食")).toBeInTheDocument();
   expect(screen.getByText("2人分")).toBeInTheDocument();
-  expect(screen.getByText("写真なし")).toBeInTheDocument();
+  expect(screen.getByRole("img", { name: "写真なし" })).toHaveTextContent(
+    "No Image",
+  );
   expect(screen.getByRole("link", { name: "一覧に戻る" })).toHaveAttribute(
     "href",
     "/",
@@ -76,6 +78,21 @@ it("レシピの内容を表示する", async () => {
   expect(lists[0]).toHaveTextContent("じゃがいも3個");
   expect(lists[0]).toHaveTextContent("塩");
   expect(lists[1].querySelectorAll("li")[1]).toHaveTextContent("煮る");
+});
+
+it("写真があれば、写真を出す", async () => {
+  apiFetchMock.mockResolvedValueOnce({
+    ...recipe,
+    photo_url: "https://example.com/large.webp",
+  });
+  render(<RecipeDetail id={12} />);
+
+  expect(
+    await screen.findByRole("img", { name: "肉じゃがの写真" }),
+  ).toHaveAttribute("src", "https://example.com/large.webp");
+  expect(
+    screen.queryByRole("img", { name: "写真なし" }),
+  ).not.toBeInTheDocument();
 });
 
 it("「一覧に戻る」は、最後に見ていた一覧の条件に戻す", async () => {

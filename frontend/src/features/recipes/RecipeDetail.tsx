@@ -4,6 +4,7 @@ import { Skeleton } from "@mantine/core";
 import Link from "next/link";
 import type { Recipe } from "@/shared/api/types";
 import { useListHref } from "./lastListSearch";
+import { NoImage } from "./NoImage";
 import { RecipeActions } from "./RecipeActions";
 import classes from "./RecipeDetail.module.css";
 import { useRecipe } from "./useRecipe";
@@ -65,7 +66,16 @@ function RecipeSheet({ recipe }: { recipe: Recipe }) {
 
       <div className={classes.layout}>
         <div>
-          <div className={classes.noImage}>写真なし</div>
+          {recipe.photo_url ? (
+            // biome-ignore lint/performance/noImgElement: サーバーで縮小済みで、期限付きの URL なので Next.js の変換を通さない
+            <img
+              className={classes.photo}
+              src={recipe.photo_url}
+              alt={`${recipe.name}の写真`}
+            />
+          ) : (
+            <NoImage />
+          )}
           <section className={classes.ingredientsSection}>
             <h2 className={classes.sectionTitle}>
               材料

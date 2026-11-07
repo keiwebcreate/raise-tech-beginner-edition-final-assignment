@@ -31,6 +31,7 @@ import {
   updateRecipe,
 } from "./api";
 import classes from "./RecipeForm.module.css";
+import { RecipePhotoField } from "./RecipePhotoField";
 import {
   initialRecipeFormValues,
   MAX_ROWS,
@@ -149,7 +150,12 @@ function RecipeFormFields({
     }
   }
 
-  const { ingredients, steps } = form.getValues();
+  const {
+    ingredients,
+    steps,
+    photo,
+    remove_photo: removePhoto,
+  } = form.getValues();
 
   return (
     <>
@@ -234,6 +240,29 @@ function RecipeFormFields({
                   {...form.getInputProps("tags")}
                 />
               </Stack>
+            </section>
+
+            <section className={classes.part}>
+              <SectionTitle>完成写真</SectionTitle>
+              <RecipePhotoField
+                currentUrl={recipe?.photo_url ?? null}
+                photo={photo}
+                removed={removePhoto}
+                onSelect={(file) => {
+                  form.clearFieldError("photo");
+                  form.setValues({ photo: file, remove_photo: false });
+                }}
+                onRemove={() => {
+                  form.clearFieldError("photo");
+                  // 保存済みの写真があれば消す印を付ける。選んだだけの写真は取り消すだけ
+                  form.setValues({
+                    photo: null,
+                    remove_photo: Boolean(recipe?.photo_url),
+                  });
+                }}
+                onError={(message) => form.setFieldError("photo", message)}
+              />
+              <SectionError message={form.errors.photo} />
             </section>
 
             <section className={classes.part}>

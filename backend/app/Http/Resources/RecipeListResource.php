@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Recipe;
+use App\Support\RecipePhotoStorage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,8 +26,7 @@ class RecipeListResource extends JsonResource
             'cook_minutes' => $this->cook_minutes,
             'tags' => TagResource::collection($this->tags),
             'is_favorite' => $this->is_favorite,
-            // 写真は写真のイシューで足す
-            'thumb_url' => null,
+            'thumb_url' => app(RecipePhotoStorage::class)->thumbUrl($this->photo_path),
             'last_cooked_on' => $this->cooking_logs_max_cooked_on,
         ];
     }

@@ -1,0 +1,17 @@
+.frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  color: var(--app-ink-dim);
+  background: var(--app-paper);
+  border: 1px dashed var(--app-rule-strong);
+  border-radius: 10px;
+}
+
+.image {
+  display: block;
+  width: 72%;
+  max-width: 220px;
+  font-family: var(--app-font-display);
+}
