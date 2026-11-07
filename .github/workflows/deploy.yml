@@ -74,7 +74,8 @@ jobs:
           # standalone には静的なファイルが入らないので、足す（詳細設計書 7.1）
           cp -R frontend/.next/standalone/. "$RUNNER_TEMP/release/next/"
           cp -R frontend/.next/static "$RUNNER_TEMP/release/next/.next/static"
-          cp -R frontend/public "$RUNNER_TEMP/release/next/public"
+          # public は今は空で Git にないので、あるときだけ足す
+          if [ -d frontend/public ]; then cp -R frontend/public "$RUNNER_TEMP/release/next/public"; fi
           tar -czf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release" .
 
       - name: S3 に置いて、EC2 に配置の命令を送る
