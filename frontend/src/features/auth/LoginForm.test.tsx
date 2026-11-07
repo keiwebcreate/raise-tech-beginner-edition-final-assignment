@@ -54,6 +54,37 @@ it("入力した内容を送り、成功したら戻り先へ移る", async () =
   await waitFor(() => expect(replace).toHaveBeenCalledWith("/recipes/1"));
 });
 
+it("React の状態を通らずに入った値（動き出す前の入力・自動入力）も送る", async () => {
+  apiFetchMock.mockResolvedValueOnce(undefined);
+  render(<LoginForm next="/" />);
+
+  // 入力のイベントを出さずに、入力欄の値だけを変える
+  (screen.getByLabelText(/メールアドレス/) as HTMLInputElement).value =
+    "auto@example.com";
+  (screen.getByLabelText(/パスワード/) as HTMLInputElement).value = "autofill";
+  await userEvent.click(screen.getByRole("button", { name: "ログイン" }));
+
+  expect(apiFetchMock).toHaveBeenCalledWith("/api/login", {
+    method: "POST",
+    body: { email: "auto@example.com", password: "autofill", remember: true },
+    quiet: true,
+  });
+});
+
+it("チェックを外すと、保持しないで送る", async () => {
+  apiFetchMock.mockResolvedValueOnce(undefined);
+  render(<LoginForm next="/" />);
+
+  await userEvent.click(screen.getByLabelText("ログイン状態を保持する"));
+  await fillAndSubmit();
+
+  expect(apiFetchMock).toHaveBeenCalledWith("/api/login", {
+    method: "POST",
+    body: { email: "a@example.com", password: "password", remember: false },
+    quiet: true,
+  });
+});
+
 it("失敗したら文言をフォームの上に出し、画面は移らない", async () => {
   apiFetchMock.mockRejectedValueOnce(
     new ApiError(422, "メールアドレスかパスワードが違います"),

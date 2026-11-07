@@ -36,6 +36,34 @@ test("ログインすると、開こうとした画面に戻る", async ({ page 
   await expect(page).toHaveURL("/?q=test");
 });
 
+test("画面が動き出す前に入力しても値は消えず、動き出すまでは送れない", async ({
+  page,
+}) => {
+  // 画面を動かす JavaScript の読み込みを遅らせて、動きの遅い端末と同じ状態にする
+  let release = () => {};
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/_next/static/**/*.js", async (route) => {
+    await gate;
+    await route.continue();
+  });
+
+  await page.goto("/login", { waitUntil: "commit" });
+  await page.getByLabel("メールアドレス").fill(OWNER.email);
+  await page.getByLabel("パスワード").fill(OWNER.password);
+
+  const button = page.getByRole("button", { name: "ログイン" });
+  await expect(button).toBeDisabled();
+
+  release();
+  await expect(button).toBeEnabled();
+  await expect(page.getByLabel("メールアドレス")).toHaveValue(OWNER.email);
+  await button.click();
+
+  await expect(page).toHaveURL("/");
+});
+
 test("ログイン中は再読み込みしてもログインしたままで、ログイン画面を開くと一覧へ移る", async ({
   page,
 }) => {
