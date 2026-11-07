@@ -24,6 +24,11 @@ return [
     'string' => ':attributeは文字で入力してください',
 
     'custom' => [
+        'cooked_on' => [
+            'required' => '作った日を選んでください',
+            'date_format' => '作った日の形が正しくありません',
+            'before_or_equal' => '作った日に未来の日付は選べません',
+        ],
         'photo' => [
             'file' => '写真を送れませんでした。もう一度選んでください',
             'uploaded' => '写真を送れませんでした。もう一度選んでください',
@@ -55,6 +60,7 @@ return [
         'servings' => '何人分',
         'cook_minutes' => '調理時間',
         'memo' => 'メモ',
+        'note' => 'ひとことメモ',
         'photo' => '写真',
         'remove_photo' => '写真の削除',
         'tags' => 'タグ',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CookingLogController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\RecipeController;
@@ -32,4 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::put('/recipes/{recipe}/favorite', [FavoriteController::class, 'store']);
     Route::delete('/recipes/{recipe}/favorite', [FavoriteController::class, 'destroy']);
+
+    Route::get('/recipes/{recipe}/cooking-logs', [CookingLogController::class, 'index']);
+    Route::post('/recipes/{recipe}/cooking-logs', [CookingLogController::class, 'store']);
+    Route::delete('/cooking-logs/{cookingLog}', [CookingLogController::class, 'destroy']);
 });
