@@ -1,0 +1,41 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+.sheet {
+  padding: 48px 16px;
+  text-align: center;
+  background: var(--app-paper);
+  border: 1px solid var(--app-rule);
+  border-radius: 12px;
+}
+
+.code {
+  margin: 0;
+  font-family: var(--app-font-display);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--app-mikan-deep);
+}
+
+.title {
+  margin: 8px 0;
+  font-family: var(--app-font-display);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.text {
+  margin: 0 0 20px;
+  color: var(--app-ink-dim);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}

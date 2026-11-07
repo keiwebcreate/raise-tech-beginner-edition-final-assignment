@@ -147,7 +147,7 @@ jobs:
           composer install --no-interaction --no-progress
           cp .env.example .env
           php artisan key:generate
-          php artisan migrate --force
+          php artisan migrate --seed --force
           php artisan tinker --execute='App\Models\User::create(["name" => "E2E", "email" => env("E2E_OWNER_EMAIL"), "password" => env("E2E_OWNER_PASSWORD")]);'
 
       - name: Next.js を作成する

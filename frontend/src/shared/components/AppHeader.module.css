@@ -1,0 +1,57 @@
+/* 画面を下に動かしても上に残る */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--app-paper);
+  border-bottom: 1px solid var(--app-rule);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1200px;
+  min-height: 58px;
+  margin: 0 auto;
+  padding: 10px 16px;
+}
+
+.logo {
+  margin-right: auto;
+  font-size: 21px;
+  color: var(--mantine-color-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.burger {
+  display: none;
+}
+
+.mobileMenu {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .nav {
+    display: none;
+  }
+
+  .burger {
+    display: block;
+  }
+
+  .mobileMenu {
+    display: block;
+    padding: 4px 16px 12px;
+    border-top: 1px solid var(--app-rule);
+  }
+
+  .mobileMenu a {
+    display: block;
+    padding: 12px 4px;
+    color: var(--mantine-color-text);
+    text-decoration: none;
+  }
+}

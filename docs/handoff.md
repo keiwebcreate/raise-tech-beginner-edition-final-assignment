@@ -19,7 +19,7 @@
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
 | [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.1 | Node.js 24・照合順序を反映（2026-11-03） |
-| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.2 | ログインの実装に合わせて追記（2026-11-07） |
+| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.3 | レシピの登録の実装に合わせて追記（2026-11-07） |
 
 ## GitHub の設定
 
@@ -50,6 +50,7 @@
 - 改行を LF に統一（イシュー #24）：ルートの `.gitattributes`。手元でも `npm run lint` が通る
 - テーブルとシーダーが完了（イシュー #26）：テーブル7つ・モデル・ファクトリ（テスト用のデータを作る部品）・カテゴリ12個。`DatabaseSeeder` は持ち主を作らない（F-54 のコマンドで作る）
 - 持ち主の作成とログインが完了（イシュー #28）：`app:create-owner`、A-02・A-04、`shared/api/client.ts`、S-01、`proxy.ts`。ログアウト（F-52）とパスワード変更（F-53）は「設定」のイシューで作る
+- レシピの登録と詳細が完了（イシュー #30）：`TextNormalizer`、A-06・A-07・A-09・A-10、`SaveRecipeAction`、共通のヘッダー、S-03（表示だけ）、S-04、S-07。写真の欄と詳細の操作ボタン、ヘッダーの「設定」はそれぞれのイシューで足す
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -61,11 +62,13 @@
 - Claude の権限では `rm`・`Remove-Item` でのファイルの削除ができない。Git で管理しているファイルは `git rm` で消せる
 - `frontend/AGENTS.md` は `next dev` が自動で作り直すので、消さない
 - 開発用の DB には、ユーザーの依頼で確認用の持ち主 `owner@example.com` を作った（パスワードは Git に書かない。ユーザーに伝え済み）。アカウントは1つだけなので、`app:create-owner` は断られる
+- 開発用の DB には、確認で作ったレシピが入っている（`肉じゃが` など）。消してよい
+- 手元に Playwright のブラウザを入れていないので、通しのテストは入っている Chrome で動かす（`node_modules/.cache/pw-local.config.cjs`。Git に入らない。消えたら作り直す）。WebKit・Firefox は CI で確かめる
 - `claude-security` のスキャンには Workflow ツールが要る。使えないセッションでは `security-review` で見直す
 
 ## 次にやること
 
-1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：レシピの登録・詳細 → 一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
+1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
 
 ## 構築の前に確かめること
 

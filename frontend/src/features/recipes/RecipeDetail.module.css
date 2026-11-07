@@ -1,0 +1,294 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: var(--app-mikan-deep);
+  text-underline-offset: 3px;
+}
+
+/* レシピ全体を1枚の紙にする（画面設計書 3.3） */
+.sheet {
+  padding: 28px 32px 32px;
+  background: var(--app-paper);
+  border: 1px solid var(--app-rule);
+  border-radius: 12px;
+}
+
+.head {
+  padding-bottom: 18px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--app-rule);
+}
+
+.name {
+  margin: 0 0 8px;
+  font-family: var(--app-font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+
+.category {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--app-mikan-wash);
+  border-left: 3px solid var(--mantine-color-mikan-6);
+  border-radius: 4px;
+}
+
+.minutes {
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  white-space: nowrap;
+}
+
+.minutes b {
+  font-size: 15px;
+  color: var(--mantine-color-text);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  overflow-wrap: anywhere;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.layout > * {
+  min-width: 0;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  border: 1px dashed var(--app-rule-strong);
+  border-radius: 10px;
+}
+
+.ingredientsSection {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  font-family: var(--app-font-display);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.servings {
+  margin-left: 6px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--app-ink-dim);
+}
+
+/* 材料：料理本のように、名前と分量を点線でつなぐ（この画面で一番印象に残す所） */
+.ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 18px;
+}
+
+.ingredients li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 0;
+}
+
+.ingredientName {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.leader {
+  flex: 1;
+  min-width: 16px;
+  border-bottom: 2px dotted var(--app-rule-strong);
+  transform: translateY(-5px);
+}
+
+.quantity {
+  min-width: 0;
+  max-width: 60%;
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* 作り方：大きな番号で区切る */
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 4px;
+  padding: 16px 0;
+  font-size: 18px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-top: 1px solid var(--app-rule);
+  counter-increment: step;
+}
+
+.steps li:first-child {
+  padding-top: 4px;
+  border-top: none;
+}
+
+.steps li::before {
+  content: counter(step);
+  font-family: var(--app-font-display);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--app-mikan-deep);
+}
+
+.sub {
+  padding-top: 24px;
+  margin-top: 36px;
+  border-top: 1px solid var(--app-rule);
+}
+
+.memo {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.cookHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  margin-bottom: 12px;
+}
+
+.cookHead .sectionTitle {
+  margin: 0;
+}
+
+.cookStat {
+  font-size: 14px;
+  color: var(--app-ink-dim);
+}
+
+.cookStat b {
+  margin: 0 2px;
+  font-family: var(--app-font-display);
+  font-size: 24px;
+  color: var(--app-wakana);
+}
+
+.empty {
+  margin: 0;
+  color: var(--app-ink-dim);
+}
+
+.records {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.records li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px 0;
+  font-size: 15px;
+  border-top: 1px dashed var(--app-rule);
+}
+
+.records time {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.records p {
+  flex: 1;
+  margin: 0;
+  color: var(--app-ink-dim);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+
+/* 料理中にスマホで読むので、スマホでは紙を画面の幅いっぱいにする */
+@media (max-width: 640px) {
+  .container {
+    padding: 12px 0 32px;
+  }
+
+  .back {
+    margin-left: 16px;
+  }
+
+  .sheet {
+    padding: 20px 16px 28px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .name {
+    font-size: 26px;
+  }
+
+  .ingredients {
+    font-size: 17px;
+  }
+
+  .steps li {
+    grid-template-columns: 40px minmax(0, 1fr);
+    font-size: 17px;
+  }
+
+  .steps li::before {
+    font-size: 28px;
+  }
+}
