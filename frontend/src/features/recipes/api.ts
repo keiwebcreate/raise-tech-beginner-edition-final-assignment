@@ -60,3 +60,21 @@ export function createRecipe(data: FormData) {
     quiet: true,
   });
 }
+
+// PHP は multipart/form-data の PUT を読めないので、POST に _method=PUT を付ける（A-11）
+export function updateRecipe(id: number, data: FormData) {
+  data.append("_method", "PUT");
+  return apiFetch<Recipe>(`/api/recipes/${id}`, {
+    method: "POST",
+    body: data,
+    quiet: true,
+  });
+}
+
+export function deleteRecipe(id: number) {
+  return apiFetch<void>(`/api/recipes/${id}`, { method: "DELETE" });
+}
+
+export function copyRecipe(id: number) {
+  return apiFetch<Recipe>(`/api/recipes/${id}/copy`, { method: "POST" });
+}

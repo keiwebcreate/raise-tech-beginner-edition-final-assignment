@@ -22,8 +22,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useRef, useState } from "react";
 import { ApiError } from "@/shared/api/client";
-import type { Category } from "@/shared/api/types";
-import { categoriesQuery, createRecipe, recipeQuery, tagsQuery } from "./api";
+import type { Category, Recipe } from "@/shared/api/types";
+import {
+  categoriesQuery,
+  createRecipe,
+  recipeQuery,
+  tagsQuery,
+  updateRecipe,
+} from "./api";
 import classes from "./RecipeForm.module.css";
 import {
   initialRecipeFormValues,
@@ -31,6 +37,7 @@ import {
   newIngredientRow,
   newStepRow,
   type RecipeFormValues,
+  recipeToFormValues,
   type SentRows,
   toFormErrors,
   toRecipeFormData,
@@ -40,8 +47,15 @@ import { DragHandle, SortableRows } from "./SortableRows";
 const SAVE_ERROR_MESSAGE =
   "保存できませんでした。時間をおいてもう一度お試しください";
 
-// S-04 レシピ登録（画面設計書 4章）。カテゴリを読み込んでからフォームを出す
-export function RecipeForm() {
+// S-04 レシピ登録・S-05 レシピ編集（画面設計書 4章）。カテゴリを読み込んでからフォームを出す
+export function RecipeForm({
+  recipe,
+  title = "レシピを追加",
+}: {
+  // 編集するレシピ。なければ登録
+  recipe?: Recipe;
+  title?: string;
+}) {
   const categories = useQuery(categoriesQuery);
   const tags = useQuery(tagsQuery);
 
@@ -50,26 +64,36 @@ export function RecipeForm() {
   }
 
   if (categories.isPending) {
-    return (
-      <div className={classes.container}>
-        <h1 className={classes.title}>レシピを追加</h1>
-        <Skeleton height={480} radius="md" />
-      </div>
-    );
+    return <RecipeFormSkeleton title={title} />;
   }
 
   return (
     <RecipeFormFields
+      recipe={recipe}
+      title={title}
       categories={categories.data}
       tagNames={tags.data?.map((tag) => tag.name) ?? []}
     />
   );
 }
 
+export function RecipeFormSkeleton({ title }: { title: string }) {
+  return (
+    <div className={classes.container}>
+      <h1 className={classes.title}>{title}</h1>
+      <Skeleton height={480} radius="md" />
+    </div>
+  );
+}
+
 function RecipeFormFields({
+  recipe,
+  title,
   categories,
   tagNames,
 }: {
+  recipe: Recipe | undefined;
+  title: string;
   categories: Category[];
   tagNames: string[];
 }) {
@@ -80,17 +104,22 @@ function RecipeFormFields({
   const sentRows = useRef<SentRows>({ ingredients: [], steps: [] });
 
   const form = useForm<RecipeFormValues>({
-    initialValues: initialRecipeFormValues(),
+    initialValues: recipe
+      ? recipeToFormValues(recipe)
+      : initialRecipeFormValues(),
   });
+  // やめたら、編集は詳細へ、登録は一覧へ戻る（画面設計書 2章）
+  const cancelHref = recipe ? `/recipes/${recipe.id}` : "/";
 
   const save = useMutation({
-    mutationFn: createRecipe,
-    onSuccess: (recipe) => {
-      queryClient.setQueryData(recipeQuery(recipe.id).queryKey, recipe);
+    mutationFn: (data: FormData) =>
+      recipe ? updateRecipe(recipe.id, data) : createRecipe(data),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(recipeQuery(saved.id).queryKey, saved);
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
       queryClient.invalidateQueries({ queryKey: tagsQuery.queryKey });
       notifications.show({ color: "green", message: "保存しました" });
-      router.push(`/recipes/${recipe.id}`);
+      router.push(`/recipes/${saved.id}`);
     },
     onError: (error) => {
       // 401 は、共通の関数がログイン画面へ移す
@@ -116,7 +145,7 @@ function RecipeFormFields({
     if (form.isDirty()) {
       confirm.open();
     } else {
-      router.push("/");
+      router.push(cancelHref);
     }
   }
 
@@ -135,7 +164,7 @@ function RecipeFormFields({
         })}
       >
         <div className={classes.container}>
-          <h1 className={classes.title}>レシピを追加</h1>
+          <h1 className={classes.title}>{title}</h1>
           {formError && (
             <Alert color="red" className={classes.alert}>
               {formError}
@@ -340,7 +369,7 @@ function RecipeFormFields({
           <Button variant="default" onClick={confirm.close}>
             入力を続ける
           </Button>
-          <Button color="red" onClick={() => router.push("/")}>
+          <Button color="red" onClick={() => router.push(cancelHref)}>
             変更を捨てる
           </Button>
         </Group>

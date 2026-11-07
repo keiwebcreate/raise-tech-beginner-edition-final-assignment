@@ -1,48 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
-import { OWNER, submitLogin } from "./helpers";
+import { createRecipe, OWNER, submitLogin, uniqueWord } from "./helpers";
 
 // レシピ一覧の通しのテスト（要件 F-01・F-07・F-11〜17）
-// ブラウザごとに同時に動き、DB にはほかのテストのレシピもあるので、
-// 実行ごとに違う言葉を名前に入れて、その言葉で探した結果だけを確かめる
-
-let sequence = 0;
-
-function uniqueWord(browserName: string): string {
-  sequence += 1;
-  return `語${browserName}${Date.now()}${sequence}`;
-}
-
-async function createRecipe(
-  page: Page,
-  name: string,
-  overrides: Record<string, unknown> = {},
-): Promise<number> {
-  // 登録の画面の通しのテストは recipe.spec.ts にあるので、ここは API で作る
-  const categories = await page.request.get("/api/categories", {
-    headers: { Accept: "application/json", Origin: "http://localhost:3000" },
-  });
-  const { data } = (await categories.json()) as { data: { id: number }[] };
-  const cookies = await page.context().cookies();
-  const token = cookies.find((cookie) => cookie.name === "XSRF-TOKEN")?.value;
-
-  const response = await page.request.post("/api/recipes", {
-    headers: {
-      Accept: "application/json",
-      Origin: "http://localhost:3000",
-      "X-XSRF-TOKEN": decodeURIComponent(token ?? ""),
-    },
-    data: {
-      name,
-      category_id: data[0].id,
-      servings: 2,
-      ingredients: [{ name: "水" }],
-      steps: [{ body: "作る" }],
-      ...overrides,
-    },
-  });
-  expect(response.status()).toBe(201);
-  return ((await response.json()) as { id: number }).id;
-}
 
 function tileLink(page: Page, name: string) {
   return page.getByRole("link", { name: new RegExp(name) });
