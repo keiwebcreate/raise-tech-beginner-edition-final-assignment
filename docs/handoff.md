@@ -18,7 +18,7 @@
 | [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
-| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.1 | Node.js 24・照合順序を反映（2026-11-03） |
+| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.2 | リージョンをシドニーに変更（2026-11-07） |
 | [detailed-design.md](detailed-design.md)（詳細設計書） | 1.7 | 設定の実装に合わせて追記（2026-11-07） |
 
 ## GitHub の設定
@@ -56,6 +56,7 @@
 - レシピの完成写真が完了（イシュー #40）：`RecipePhotoStorage`、A-08〜A-12・A-15 の写真、フォームの写真の欄、「No Image」の画像（`NoImage.tsx`、SVG）。本番の S3 の設定は公開のイシューで行う
 - 作った記録が完了（イシュー #42）：A-16〜A-18、D-02・D-03、詳細の「作った」ボタンと記録の欄
 - 設定が完了（イシュー #44）：A-03・A-05、S-06、ヘッダーの「設定」。**要件の機能はこれで全部**
+- AWS 段階1が完了（イシュー #46）：`terraform/`（VPC・サブネット・セキュリティグループ・EC2・固定の IP アドレス・EC2 の役割）。リージョンはシドニー
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -75,11 +76,23 @@
 
 ## 次にやること
 
-1. AWS への公開（AWS 構成設計書）。下の「構築の前に確かめること」を先に見る
+1. AWS 段階2（RDS・S3・Parameter Store・EC2 の役割。AWS 構成設計書 9章）。下の「構築の前に確かめること」を先に見る
+
+## AWS の今の状態（2026-11-07）
+
+**段階1のものが動いていて、1日あたり約0.7ドルかかる**（設計書の見込みからの計算）。
+
+- シドニーに 16個（VPC・サブネット・EC2・固定の IP アドレスなど）。EC2 は `terraform output` で確かめる
+- 作る・変えるときは `terraform/` で `terraform plan` の結果を見せ、ユーザーの OK のあとで `terraform apply` する
+- 全部消すときは、ユーザーの OK のあとで `terraform/` で `terraform destroy`。state（`terraform.tfstate`）はパソコンの中だけにあるので、消さない
+- EC2 の中では sshd が最初から動いているが、ポート22を開けていないので外から届かない。鍵も登録していない
+- `aws ssm send-command` の `--parameters` は、PowerShell からは JSON ファイル（`file://`）で渡す。直接書くと引用符が壊れる
+- PowerShell から `terraform plan -out=...` を動かすときは、`"-out=..."` と引用符で囲む
 
 ## 構築の前に確かめること
 
 - 写真を 5MB まで送れるよう、本番の PHP に `upload_max_filesize=6M`・`post_max_size=8M`、Nginx に `client_max_body_size 8m` を設定する。PHP の拡張機能 `exif`（写真の向きの補正）も入れる
 
 - `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）になっているかを確かめる
-- 前のアプリ（beginner_version）で、作業用の IAM ユーザーが組織の制限（SCP）で EC2 などを拒否されていた。同じ AWS アカウントを使うなら、解決しているかを確かめる
+- AWS は**絶対に東京にしない**。組織の制限（SCP）で、シドニー（`ap-southeast-2`）以外の EC2 などは拒否される（2026-11-07 に確認）
+- 同じ制限で GitHub の OIDC が作れない見込み。段階3の前に、デプロイの認証の方法を決める（AWS 構成設計書 6章）
