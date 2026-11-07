@@ -304,6 +304,23 @@ describe('編集', function () {
     });
 });
 
+it('本番の S3 の部品が入っていて、期限付きの URL を作れる', function () {
+    // 通信はしない。署名は手元で計算される
+    $url = Storage::build([
+        'driver' => 's3',
+        'key' => 'test-key',
+        'secret' => 'test-secret',
+        'region' => 'ap-southeast-2',
+        'bucket' => 'test-bucket',
+    ])->temporaryUrl('recipes/large/a.webp', now()->addMinutes(60));
+
+    expect($url)
+        ->toContain('test-bucket')
+        ->toContain('recipes/large/a.webp')
+        ->toContain('X-Amz-Signature=')
+        ->toContain('X-Amz-Expires=3600');
+});
+
 it('写真の URL は署名つきで、期限内だけ見られる', function () {
     // 偽の Storage では署名の URL を作らないので、本物の local を使う
     Storage::forgetDisk('local');

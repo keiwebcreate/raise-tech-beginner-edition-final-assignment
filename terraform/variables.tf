@@ -20,3 +20,21 @@ variable "instance_type" {
   type        = string
   default     = "t4g.small"
 }
+
+variable "db_instance_class" {
+  description = "RDS の大きさ（AWS 構成設計書 5.3）"
+  type        = string
+  default     = "db.t4g.micro"
+}
+
+variable "db_name" {
+  description = "最初に作る DB の名前。開発と同じ"
+  type        = string
+  default     = "recipe_app"
+}
+
+variable "db_username" {
+  description = "DB のユーザー名。開発と同じ"
+  type        = string
+  default     = "recipe_app_user"
+}
