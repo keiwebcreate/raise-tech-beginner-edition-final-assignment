@@ -116,6 +116,10 @@ jobs:
     name: e2e
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      # 通しのテスト用の持ち主。実行のたびに捨てる DB に入れるだけなので、秘密の情報ではない
+      E2E_OWNER_EMAIL: e2e-owner@example.com
+      E2E_OWNER_PASSWORD: e2e-password-1234
     steps:
       - uses: actions/checkout@v7
 
@@ -144,6 +148,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           php artisan migrate --force
+          php artisan tinker --execute='App\Models\User::create(["name" => "E2E", "email" => env("E2E_OWNER_EMAIL"), "password" => env("E2E_OWNER_PASSWORD")]);'
 
       - name: Next.js を作成する
         working-directory: frontend

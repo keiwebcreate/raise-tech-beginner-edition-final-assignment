@@ -1,12 +1,17 @@
 /* 全体の土台。色と書体は Mantine のテーマ（src/shared/theme.ts）で決める */
 
 :root {
-  /* まな板（背景） */
-  --app-board: #f4f5f1;
+  --app-board: #f4f5f1; /* まな板（背景） */
+  --app-paper: #ffffff; /* 紙（内容を載せる面） */
+  --app-rule: #dfe2db; /* 区切りの線 */
+  --app-ink-dim: #5b6871; /* 補足の文字 */
 }
 
 [data-mantine-color-scheme="dark"] {
   --app-board: #1b2228;
+  --app-paper: #222b32;
+  --app-rule: #34404a;
+  --app-ink-dim: #a3adb3;
 }
 
 body {

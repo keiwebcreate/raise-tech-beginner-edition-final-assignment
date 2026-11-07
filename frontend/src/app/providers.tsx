@@ -4,7 +4,7 @@ import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
-import { theme } from "@/shared/theme";
+import { cssVariablesResolver, theme } from "@/shared/theme";
 
 // 全画面で使う準備：Mantine（見た目）・通知・TanStack Query（サーバーのデータの係）
 export function Providers({ children }: { children: ReactNode }) {
@@ -21,7 +21,11 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme} defaultColorScheme="auto">
+      <MantineProvider
+        theme={theme}
+        defaultColorScheme="auto"
+        cssVariablesResolver={cssVariablesResolver}
+      >
         {/* 成功は4秒で消える。エラーは各所で autoClose: false にする（画面設計書 3.4） */}
         <Notifications position="top-right" autoClose={4000} />
         {children}
