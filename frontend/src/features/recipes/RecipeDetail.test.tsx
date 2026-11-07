@@ -11,8 +11,11 @@ const notFound = vi.fn(() => {
   throw new Error("NEXT_NOT_FOUND");
 });
 
+const push = vi.fn();
+
 vi.mock("next/navigation", () => ({
   notFound: () => notFound(),
+  useRouter: () => ({ push }),
 }));
 
 vi.mock("@/shared/api/client", async (importOriginal) => ({
@@ -46,6 +49,7 @@ const recipe: Recipe = {
 
 beforeEach(() => {
   notFound.mockClear();
+  push.mockClear();
   apiFetchMock.mockReset();
   sessionStorage.clear();
 });
@@ -134,6 +138,70 @@ it("★ の保存に失敗したら、表示を戻す", async () => {
     }),
   );
   await waitFor(() => expect(star).toHaveAttribute("aria-pressed", "false"));
+});
+
+it("編集のボタンは、編集画面へのリンクになる", async () => {
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  render(<RecipeDetail id={12} />);
+
+  expect(await screen.findByRole("link", { name: "編集" })).toHaveAttribute(
+    "href",
+    "/recipes/12/edit",
+  );
+});
+
+it("複製は確かめてから呼び、コピーの編集画面へ移る", async () => {
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  const user = userEvent.setup();
+  render(<RecipeDetail id={12} />);
+
+  await user.click(await screen.findByRole("button", { name: "複製" }));
+  expect(apiFetchMock).toHaveBeenCalledTimes(1);
+
+  apiFetchMock.mockResolvedValueOnce({ ...recipe, id: 13 });
+  await user.click(screen.getByRole("button", { name: "複製する" }));
+
+  await waitFor(() =>
+    expect(push).toHaveBeenCalledWith("/recipes/13/edit?copied=1"),
+  );
+  expect(apiFetchMock).toHaveBeenCalledWith("/api/recipes/12/copy", {
+    method: "POST",
+  });
+});
+
+it("削除は確かめてから呼び、最後に見ていた一覧へ移る", async () => {
+  sessionStorage.setItem("recipe-box:list-search", "?page=2");
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  const user = userEvent.setup();
+  render(<RecipeDetail id={12} />);
+
+  await user.click(await screen.findByRole("button", { name: "削除" }));
+  expect(apiFetchMock).toHaveBeenCalledTimes(1);
+
+  apiFetchMock.mockResolvedValueOnce(undefined);
+  await user.click(screen.getByRole("button", { name: "削除する" }));
+
+  await waitFor(() => expect(push).toHaveBeenCalledWith("/?page=2"));
+  expect(apiFetchMock).toHaveBeenCalledWith("/api/recipes/12", {
+    method: "DELETE",
+  });
+});
+
+it("削除に失敗したら、一覧へ移らない", async () => {
+  apiFetchMock.mockResolvedValueOnce(recipe);
+  const user = userEvent.setup();
+  render(<RecipeDetail id={12} />);
+
+  await user.click(await screen.findByRole("button", { name: "削除" }));
+  apiFetchMock.mockRejectedValueOnce(new ApiError(500, "エラーが起きました"));
+  await user.click(screen.getByRole("button", { name: "削除する" }));
+
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "削除する" }),
+    ).not.toHaveAttribute("data-loading"),
+  );
+  expect(push).not.toHaveBeenCalled();
 });
 
 it("メモは文字のまま出す（HTML として動かさない）", async () => {

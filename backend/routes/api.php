@@ -25,6 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/recipes', [RecipeController::class, 'index']);
     Route::post('/recipes', [RecipeController::class, 'store']);
     Route::get('/recipes/{recipe}', [RecipeController::class, 'show']);
+    // 画面は写真を送るので、POST に _method=PUT を付けて呼ぶ（API 設計書 A-11）
+    Route::put('/recipes/{recipe}', [RecipeController::class, 'update']);
+    Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy']);
+    Route::post('/recipes/{recipe}/copy', [RecipeController::class, 'copy']);
 
     Route::put('/recipes/{recipe}/favorite', [FavoriteController::class, 'store']);
     Route::delete('/recipes/{recipe}/favorite', [FavoriteController::class, 'destroy']);

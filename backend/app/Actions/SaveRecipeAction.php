@@ -18,6 +18,8 @@ class SaveRecipeAction
     {
         return DB::transaction(function () use ($recipe, $input) {
             $recipe ??= new Recipe;
+            // 画面は空の項目を送らないので、送られなかった任意の項目は空にする（編集で消せるように）
+            $recipe->fill(['name_kana' => null, 'cook_minutes' => null, 'memo' => null]);
             $recipe->fill(Arr::only($input, ['name', 'name_kana', 'category_id', 'servings', 'cook_minutes', 'memo']));
             $recipe->save();
 

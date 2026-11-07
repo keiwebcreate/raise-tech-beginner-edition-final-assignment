@@ -1,4 +1,5 @@
 import { randomId } from "@mantine/hooks";
+import type { Recipe } from "@/shared/api/types";
 
 // レシピのフォームの値と、送る形への変換
 
@@ -38,6 +39,25 @@ export function initialRecipeFormValues(): RecipeFormValues {
     ingredients: [newIngredientRow()],
     steps: [newStepRow()],
     memo: "",
+  };
+}
+
+// 編集の画面で、今の内容をフォームに入れる
+export function recipeToFormValues(recipe: Recipe): RecipeFormValues {
+  return {
+    name: recipe.name,
+    name_kana: recipe.name_kana ?? "",
+    category_id: String(recipe.category.id),
+    servings: recipe.servings,
+    cook_minutes: recipe.cook_minutes ?? "",
+    tags: recipe.tags.map((tag) => tag.name),
+    ingredients: recipe.ingredients.map((row) => ({
+      key: randomId(),
+      name: row.name,
+      quantity: row.quantity ?? "",
+    })),
+    steps: recipe.steps.map((row) => ({ key: randomId(), body: row.body })),
+    memo: recipe.memo ?? "",
   };
 }
 
