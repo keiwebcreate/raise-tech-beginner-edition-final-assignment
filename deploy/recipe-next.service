@@ -1,0 +1,22 @@
+# Next.js を常に動かす設定。deploy/setup.sh が /etc/systemd/system/ に置く
+[Unit]
+Description=Recipe Box Next.js
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/recipe-app/current/next
+ExecStart=/usr/bin/node-24 server.js
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3000
+# Laravel の住所（EC2 の中だけの入口）と、画面の住所
+EnvironmentFile=/opt/recipe-app/shared/next.env
+# 落ちたら自動で起き直す
+Restart=always
+RestartSec=3
+# 専用の使い捨てのユーザーで動かし、書き込める場所をなくす
+DynamicUser=yes
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

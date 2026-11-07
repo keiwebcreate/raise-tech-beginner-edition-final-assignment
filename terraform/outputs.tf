@@ -18,6 +18,11 @@ output "deploy_bucket" {
   value       = aws_s3_bucket.main["deploy"].bucket
 }
 
+output "deploy_user" {
+  description = "デプロイ専用の IAM ユーザー"
+  value       = aws_iam_user.deploy.name
+}
+
 output "ec2_public_dns" {
   description = "固定の IP アドレスの DNS 名（段階4で CloudFront の転送先にする）"
   value       = aws_eip.app.public_dns

@@ -18,8 +18,8 @@
 | [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
-| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.3 | 段階2の実装に合わせて更新（2026-11-07） |
-| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.7 | 設定の実装に合わせて追記（2026-11-07） |
+| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.4 | 段階3の実装に合わせて更新（2026-11-07） |
+| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.8 | デプロイの実装に合わせて追記（2026-11-07） |
 
 ## GitHub の設定
 
@@ -83,7 +83,9 @@
 
 **段階2までのものが動いていて、1日あたり約1.3ドルかかる**（設計書の見込みからの計算）。
 
-- シドニーに 36個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3 など）。接続先などは `terraform output` で確かめる
+- シドニーに 41個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3 など）。接続先などは `terraform output` で確かめる
+- GitHub の設定：秘密の情報 `AWS_ACCESS_KEY_ID`・`AWS_SECRET_ACCESS_KEY`、変数 `DEPLOY_BUCKET`・`EC2_INSTANCE_ID`。EC2 を作り直すと ID が変わるので `gh variable set` で直す。全部消したあとは `gh secret delete` と `gh variable delete` で消す
+- デプロイ専用の鍵の作り方（ユーザーが動かす。値を画面に出さず GitHub へ渡す）：`$key = aws iam create-access-key --user-name recipe-app-deploy --output json | ConvertFrom-Json` のあと、`$key.AccessKey.AccessKeyId | gh secret set AWS_ACCESS_KEY_ID`、`$key.AccessKey.SecretAccessKey | gh secret set AWS_SECRET_ACCESS_KEY`、`Remove-Variable key`
 - RDS を作るのに9分ほどかかる
 - MySQL のコマンドで日本語を扱うときは `--default-character-set=utf8mb4` を付ける。付けないと照合順序のエラーになる
 - `aws ssm send-command` の JSON ファイルに日本語を直接書かない。パソコンの AWS CLI が読めないか、文字が化ける。`は` のように書く
