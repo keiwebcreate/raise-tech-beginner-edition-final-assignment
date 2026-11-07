@@ -1,12 +1,10 @@
-# Recipe Box（仮）
+# Recipe Box
 
 自分専用のレシピ管理 Web アプリです。料理名・材料・カテゴリ・タグからレシピをすぐに探せ、「作った記録」を残してレシピの改良や献立決めに役立てられます。
 
-RaiseTech 初級編の最終課題として、**要件定義から設計・開発・AWS へのデプロイまでを一人で**進めています。
+RaiseTech 初級編の最終課題として、**要件定義から設計・開発・AWS へのデプロイまでを一人で**行いました（[進み具合](#進み具合)）。
 
-> **設計中です。** 要件定義・基本設計（技術選定・画面・テーブル・API・AWS 構成）・詳細設計が終わり、環境構築を進めています。まだコードはありません（[進み具合](#進み具合)）。
-
-## 主な機能（予定）
+## 主な機能
 
 | 区分 | 機能 |
 |---|---|
@@ -31,11 +29,12 @@ RaiseTech 初級編の最終課題として、**要件定義から設計・開�
 | データベース | MySQL 8.4 |
 | テスト | Pest（サーバー）、Vitest・React Testing Library（画面）、Playwright（ブラウザでの通しのテスト） |
 | 公開先 | AWS（CloudFront・EC2・RDS・S3） |
-| その他 | Docker（開発用の DB）、GitHub（イシュー・プルリクエスト）、GitHub Actions（自動テスト） |
+| 構築 | Terraform、GitHub Actions（自動テスト・自動デプロイ）、Systems Manager（Session Manager・Run Command・Parameter Store） |
+| その他 | Docker（開発用の DB）、GitHub（イシュー・プルリクエスト） |
 
 バージョンと選んだ理由は [技術スタック](docs/tech-stack.md) にあります。
 
-## 構成（予定）
+## 構成
 
 ```mermaid
 flowchart LR
@@ -58,6 +57,10 @@ flowchart LR
 
 - 画面（Next.js）と API（Laravel）を同じドメインで配り、ログインはクッキーで行います（Sanctum の SPA 認証）
 - 独自ドメインは使わず、CloudFront の URL で HTTPS にします
+- 組織の制限で東京リージョンを使えないので、シドニー（`ap-southeast-2`）に作ります
+- 構成は `terraform/`、EC2 の準備と配置の手順は `deploy/` にあります
+- main にマージすると、CI の成功のあとに自動でデプロイします。失敗したら前の版に戻します
+- 費用を抑えるため、確認と提出が済んだら `terraform destroy` で全部消します
 
 ## 設計書
 
@@ -82,8 +85,8 @@ flowchart LR
 | 基本設計：テーブル設計・API 設計・AWS 構成 | ✅ 完了 |
 | 詳細設計 | ✅ 完了 |
 | 環境構築 | ✅ 完了（開発用の DB、Laravel・Next.js のひな形） |
-| 実装・テスト | ⏳ これから |
-| AWS へのデプロイ | ⏳ これから |
+| 実装・テスト | ✅ 完了（要件の機能すべて。サーバー・画面・ブラウザの通しのテスト） |
+| AWS へのデプロイ | ✅ 完了（CloudFront の HTTPS で動作を確認） |
 
 ## 開発環境の作り方
 
@@ -93,7 +96,7 @@ Windows 11 で作っています。くわしくは [詳細設計書 3章](docs/d
 
 | 道具 | 版 | 使い道 |
 |---|---|---|
-| [Laravel Herd](https://herd.laravel.com/windows) | PHP 8.5 を入れておく（`php85` で呼べる。拡張機能 `intl`・`gd`・`pdo_mysql`） | Laravel |
+| [Laravel Herd](https://herd.laravel.com/windows) | PHP 8.5 を入れておく（`php85` で呼べる。拡張機能 `intl`・`gd`・`exif`・`pdo_mysql`） | Laravel |
 | [fnm](https://github.com/Schniz/fnm) | Node.js 24（`frontend/.node-version`） | Next.js |
 | Docker Desktop | | 開発用の MySQL 8.4 |
 

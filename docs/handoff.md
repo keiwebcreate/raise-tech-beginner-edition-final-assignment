@@ -58,6 +58,8 @@
 - 設定が完了（イシュー #44）：A-03・A-05、S-06、ヘッダーの「設定」。**要件の機能はこれで全部**
 - AWS 段階1が完了（イシュー #46）：`terraform/`（VPC・サブネット・セキュリティグループ・EC2・固定の IP アドレス・EC2 の役割）。リージョンはシドニー
 - AWS 段階2が完了（イシュー #48）：RDS・S3 2つ・Parameter Store・EC2 の権限。S3 の部品 `league/flysystem-aws-s3-v3` を追加。Symfony を脆弱性の修正版 8.1.11 に更新
+- AWS 段階3が完了（イシュー #50）：`deploy.yml`・`deploy/`、デプロイ専用の IAM ユーザー、本番の持ち主（ユーザーが作成）
+- AWS 段階4が完了（イシュー #53）：CloudFront、秘密のヘッダー、本当の接続元の IP。ユーザーがブラウザでログイン・写真つきの登録・表示・ログアウトを確認。**公開まで全部終わり**
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -77,28 +79,39 @@
 
 ## 次にやること
 
-1. AWS 段階3（デプロイ。AWS 構成設計書 9章）。先にデプロイの認証の方法を決める（OIDC が作れない見込み）。下の「構築の前に確かめること」を先に見る
+1. リポジトリの URL を提出する（ユーザー）
+2. 提出したら、ユーザーの OK のあとで全部消す（下の「全部消すときの手順」）
 
 ## AWS の今の状態（2026-11-07）
 
-**段階2までのものが動いていて、1日あたり約1.3ドルかかる**（設計書の見込みからの計算）。
+**全段階のものが動いていて、1日あたり約1.3ドルかかる**（設計書の見込みからの計算）。アプリは `https://d2to5ltvzdr6zd.cloudfront.net`。
 
-- シドニーに 41個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3 など）。接続先などは `terraform output` で確かめる
+- シドニーに 44個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3・CloudFront など）。接続先などは `terraform output` で確かめる
+- AWS Budgets の月10ドル・20ドルの通知（AWS 構成設計書 8.2）は作っていない。アカウントには別の予算 `AWS budget`（1ドル）がある
 - GitHub の設定：秘密の情報 `AWS_ACCESS_KEY_ID`・`AWS_SECRET_ACCESS_KEY`、変数 `DEPLOY_BUCKET`・`EC2_INSTANCE_ID`。EC2 を作り直すと ID が変わるので `gh variable set` で直す。全部消したあとは `gh secret delete` と `gh variable delete` で消す
 - デプロイ専用の鍵の作り方（ユーザーが動かす。値を画面に出さず GitHub へ渡す）：`$key = aws iam create-access-key --user-name recipe-app-deploy --output json | ConvertFrom-Json` のあと、`$key.AccessKey.AccessKeyId | gh secret set AWS_ACCESS_KEY_ID`、`$key.AccessKey.SecretAccessKey | gh secret set AWS_SECRET_ACCESS_KEY`、`Remove-Variable key`
 - RDS を作るのに9分ほどかかる
 - MySQL のコマンドで日本語を扱うときは `--default-character-set=utf8mb4` を付ける。付けないと照合順序のエラーになる
-- `aws ssm send-command` の JSON ファイルに日本語を直接書かない。パソコンの AWS CLI が読めないか、文字が化ける。`は` のように書く
+- `aws ssm send-command` の JSON ファイルに日本語を直接書かない。パソコンの AWS CLI が読めないか、文字が化ける。MySQL の文字列なら `X'E381AF'` のように16進数で書く
 - 作る・変えるときは `terraform/` で `terraform plan` の結果を見せ、ユーザーの OK のあとで `terraform apply` する
 - 全部消すときは、ユーザーの OK のあとで `terraform/` で `terraform destroy`。state（`terraform.tfstate`）はパソコンの中だけにあるので、消さない
 - EC2 の中では sshd が最初から動いているが、ポート22を開けていないので外から届かない。鍵も登録していない
 - `aws ssm send-command` の `--parameters` は、PowerShell からは JSON ファイル（`file://`）で渡す。直接書くと引用符が壊れる
 - PowerShell から `terraform plan -out=...` を動かすときは、`"-out=..."` と引用符で囲む
 
-## 構築の前に確かめること
+## 全部消すときの手順
 
-- 写真を 5MB まで送れるよう、本番の PHP に `upload_max_filesize=6M`・`post_max_size=8M`、Nginx に `client_max_body_size 8m` を設定する。PHP の拡張機能 `exif`（写真の向きの補正）も入れる
+ユーザーの OK のあとで行う。
 
-- `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）になっているかを確かめる
+1. `terraform/` で `terraform destroy`（CloudFront があるので時間がかかる。RDS の中身と S3 の写真も消える）
+2. `gh secret delete AWS_ACCESS_KEY_ID`、`gh secret delete AWS_SECRET_ACCESS_KEY`
+3. `gh variable delete DEPLOY_BUCKET`、`gh variable delete EC2_INSTANCE_ID`
+4. 消したあと main にマージすると `deploy.yml` が動いて失敗するので、消したら `deploy.yml` を止める（GitHub の Actions の画面で Disable、または `gh workflow disable Deploy`）
+5. AWS CLI で、シドニーに EC2・RDS・S3 などが残っていないことを確かめる
+
+## 作り直すときに確かめること
+
 - AWS は**絶対に東京にしない**。組織の制限（SCP）で、シドニー（`ap-southeast-2`）以外の EC2 などは拒否される（2026-11-07 に確認）
-- 同じ制限で GitHub の OIDC が作れない見込み。段階3の前に、デプロイの認証の方法を決める（AWS 構成設計書 6章）
+- 同じ制限で GitHub の OIDC は作れない見込みなので、デプロイ専用の IAM ユーザーの鍵を使う
+- `terraform apply` のあと、`gh variable set` で `DEPLOY_BUCKET`・`EC2_INSTANCE_ID` を設定し、鍵を登録する。`APP_KEY` や DB のパスワードは作り直される。本番の持ち主も作り直す（Session Manager で入って `cd /opt/recipe-app/current/backend && sudo -u apache php artisan app:create-owner`）
+- `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）のままにする
