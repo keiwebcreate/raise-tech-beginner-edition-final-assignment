@@ -43,6 +43,9 @@ import {
 
 const KEYWORD_WAIT_MS = 300;
 
+// 一覧に出すタグの数。残りは「+7」のように数で示す。全部は詳細で読める
+const VISIBLE_TAGS = 3;
+
 type View = "tile" | "list";
 
 // 条件を URL に入れて覚える。pushState は Next.js の useSearchParams に伝わるので、
@@ -624,11 +627,19 @@ function TagList({ tags, className }: { tags: Tag[]; className?: string }) {
   if (tags.length === 0) {
     return null;
   }
+  const hiddenCount = tags.length - VISIBLE_TAGS;
+
   return (
-    <div className={`${classes.tags} ${className ?? ""}`}>
-      {tags.map((tag) => (
-        <span key={tag.id}>#{tag.name}</span>
+    <div
+      className={`${classes.tags} ${className ?? ""}`}
+      title={tags.map((tag) => `#${tag.name}`).join(" ")}
+    >
+      {tags.slice(0, VISIBLE_TAGS).map((tag) => (
+        <span key={tag.id} className={classes.tag}>
+          #{tag.name}
+        </span>
       ))}
+      {hiddenCount > 0 && <span>+{hiddenCount}</span>}
     </div>
   );
 }

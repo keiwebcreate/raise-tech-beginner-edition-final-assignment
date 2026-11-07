@@ -88,6 +88,32 @@ it("レシピを並べ、件数を出し、★ の状態を伝える", async () 
   ).toHaveAttribute("aria-pressed", "true");
 });
 
+it("タグが3つまでなら全部出し、数は出さない", async () => {
+  const tags = ["和食", "時短", "作り置き"].map((name, id) => ({ id, name }));
+  respondWith(page([{ ...item, tags }]));
+
+  render(<RecipeList />);
+
+  expect(await screen.findByText("#作り置き")).toBeInTheDocument();
+  expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
+});
+
+it("タグが4つ以上なら3つと残りの数を出し、マウスを乗せると全部出る", async () => {
+  const names = ["和食", "時短", "作り置き", "お弁当", "節約"];
+  const tags = names.map((name, id) => ({ id, name }));
+  respondWith(page([{ ...item, tags }]));
+
+  render(<RecipeList />);
+
+  expect(await screen.findByText("#作り置き")).toBeInTheDocument();
+  expect(screen.queryByText("#お弁当")).not.toBeInTheDocument();
+  const hidden = screen.getByText("+2");
+  expect(hidden.parentElement).toHaveAttribute(
+    "title",
+    "#和食 #時短 #作り置き #お弁当 #節約",
+  );
+});
+
 it("レシピが1件もないときは、最初の1件を案内する", async () => {
   respondWith(page([]));
 
