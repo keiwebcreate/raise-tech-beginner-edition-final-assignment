@@ -8,10 +8,15 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    # ばらばらの文字列を作る部品（DB のパスワード）
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.7"
+    }
   }
 
   # state（何を作ったかの記録）は、このフォルダの terraform.tfstate に置く。
-  # 秘密の値が入るので Git には入れない（.gitignore）
+  # 中身の細かい情報が入るので Git には入れない（.gitignore）
 }
 
 provider "aws" {

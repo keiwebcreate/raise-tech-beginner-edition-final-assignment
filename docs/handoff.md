@@ -18,7 +18,7 @@
 | [screen-design.md](screen-design.md)（画面設計書）＋ [mockups/](mockups/index.html) | 1.2 | 見た目を作り直し（#8）、よみがなを追加（#10） |
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
-| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.2 | リージョンをシドニーに変更（2026-11-07） |
+| [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.3 | 段階2の実装に合わせて更新（2026-11-07） |
 | [detailed-design.md](detailed-design.md)（詳細設計書） | 1.7 | 設定の実装に合わせて追記（2026-11-07） |
 
 ## GitHub の設定
@@ -57,6 +57,7 @@
 - 作った記録が完了（イシュー #42）：A-16〜A-18、D-02・D-03、詳細の「作った」ボタンと記録の欄
 - 設定が完了（イシュー #44）：A-03・A-05、S-06、ヘッダーの「設定」。**要件の機能はこれで全部**
 - AWS 段階1が完了（イシュー #46）：`terraform/`（VPC・サブネット・セキュリティグループ・EC2・固定の IP アドレス・EC2 の役割）。リージョンはシドニー
+- AWS 段階2が完了（イシュー #48）：RDS・S3 2つ・Parameter Store・EC2 の権限。S3 の部品 `league/flysystem-aws-s3-v3` を追加。Symfony を脆弱性の修正版 8.1.11 に更新
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -76,13 +77,16 @@
 
 ## 次にやること
 
-1. AWS 段階2（RDS・S3・Parameter Store・EC2 の役割。AWS 構成設計書 9章）。下の「構築の前に確かめること」を先に見る
+1. AWS 段階3（デプロイ。AWS 構成設計書 9章）。先にデプロイの認証の方法を決める（OIDC が作れない見込み）。下の「構築の前に確かめること」を先に見る
 
 ## AWS の今の状態（2026-11-07）
 
-**段階1のものが動いていて、1日あたり約0.7ドルかかる**（設計書の見込みからの計算）。
+**段階2までのものが動いていて、1日あたり約1.3ドルかかる**（設計書の見込みからの計算）。
 
-- シドニーに 16個（VPC・サブネット・EC2・固定の IP アドレスなど）。EC2 は `terraform output` で確かめる
+- シドニーに 36個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3 など）。接続先などは `terraform output` で確かめる
+- RDS を作るのに9分ほどかかる
+- MySQL のコマンドで日本語を扱うときは `--default-character-set=utf8mb4` を付ける。付けないと照合順序のエラーになる
+- `aws ssm send-command` の JSON ファイルに日本語を直接書かない。パソコンの AWS CLI が読めないか、文字が化ける。`は` のように書く
 - 作る・変えるときは `terraform/` で `terraform plan` の結果を見せ、ユーザーの OK のあとで `terraform apply` する
 - 全部消すときは、ユーザーの OK のあとで `terraform/` で `terraform destroy`。state（`terraform.tfstate`）はパソコンの中だけにあるので、消さない
 - EC2 の中では sshd が最初から動いているが、ポート22を開けていないので外から届かない。鍵も登録していない
