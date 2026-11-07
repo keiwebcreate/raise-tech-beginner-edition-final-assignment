@@ -1,0 +1,347 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+/* 検索・絞り込み：枠で囲まず、一覧の上に置く */
+.keywordRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.keyword {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileOnly {
+  display: none;
+  flex: none;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.filterRow select {
+  min-width: 180px;
+}
+
+/* 中身の高さだけ、画面の下から出す */
+.drawerContent {
+  flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  max-height: 90dvh;
+  border-radius: 16px 16px 0 0;
+}
+
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+
+.drawerActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.drawerApply {
+  flex: 1;
+}
+
+/* 件数・並び替え・表示の切り替え */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding-bottom: 10px;
+  margin: 24px 0 14px;
+  border-bottom: 1px solid var(--app-rule);
+}
+
+.count {
+  margin: 0 auto 0 0;
+  font-size: 14px;
+  color: var(--app-ink-dim);
+  overflow-wrap: anywhere;
+}
+
+.count b {
+  margin-right: 8px;
+  font-family: var(--app-font-display);
+  font-size: 18px;
+  color: var(--mantine-color-text);
+}
+
+.viewSwitch {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--app-rule-strong);
+  border-radius: 8px;
+}
+
+.viewSwitch button {
+  width: 38px;
+  height: 34px;
+  font-size: 16px;
+  color: var(--mantine-color-text);
+  cursor: pointer;
+  background: var(--app-paper);
+  border: none;
+}
+
+.viewSwitch button[aria-pressed="true"] {
+  background: var(--app-mikan-wash);
+  box-shadow: inset 0 -3px 0 var(--mantine-color-mikan-6);
+}
+
+.viewSwitch button:focus-visible {
+  outline: 2px solid var(--app-mikan-deep);
+  outline-offset: -2px;
+}
+
+/* タイル：写真＋料理名だけ。料理本の目次のような並び */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px 20px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.grid > li {
+  min-width: 0;
+}
+
+.skeleton {
+  aspect-ratio: 4 / 3;
+  height: auto;
+}
+
+.tile {
+  position: relative;
+}
+
+.link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 10px;
+}
+
+.link:focus-visible,
+.rowLink:focus-visible {
+  outline: 2px solid var(--app-mikan-deep);
+  outline-offset: 4px;
+}
+
+.tileFavorite {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  background: var(--app-paper);
+  border: 1px dashed var(--app-rule-strong);
+  border-radius: 10px;
+}
+
+.title {
+  margin: 10px 0 4px;
+  font-family: var(--app-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: center;
+}
+
+.category {
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--app-mikan-wash);
+  border-left: 3px solid var(--mantine-color-mikan-6);
+  border-radius: 4px;
+}
+
+.minutes {
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  white-space: nowrap;
+}
+
+.minutes b {
+  font-size: 15px;
+  color: var(--mantine-color-text);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--app-ink-dim);
+  overflow-wrap: anywhere;
+}
+
+/* リスト：細い線で区切った行 */
+.list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-right: 4px;
+  border-bottom: 1px solid var(--app-rule);
+}
+
+.row:hover {
+  background: var(--app-paper);
+}
+
+.rowLink {
+  display: flex;
+  flex: 1;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.thumb {
+  flex: none;
+  width: 84px;
+}
+
+.thumb .noImage {
+  font-size: 11px;
+  border-radius: 6px;
+}
+
+.rowMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.rowTitle {
+  margin: 0 0 2px;
+  overflow: hidden;
+  font-family: var(--app-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link:hover .title,
+.rowLink:hover .rowTitle {
+  color: var(--app-mikan-deep);
+}
+
+.pager {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.empty {
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.empty h2 {
+  margin: 0 0 6px;
+  font-family: var(--app-font-display);
+  font-size: 20px;
+}
+
+.empty p {
+  margin: 0 0 16px;
+  color: var(--app-ink-dim);
+}
+
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobileOnly {
+    display: block;
+  }
+
+  .filterRow {
+    display: none;
+  }
+
+  .count {
+    flex: 1 0 100%;
+  }
+
+  .sort {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title {
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  .tileTags {
+    display: none;
+  }
+
+  .thumb {
+    width: 64px;
+  }
+}

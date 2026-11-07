@@ -1,0 +1,55 @@
+.on {
+  color: var(--app-star);
+}
+
+.off {
+  color: var(--app-ink-dim);
+}
+
+/* 写真の右上に重ねる丸いボタン */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  background: var(--app-paper);
+  border: none;
+  border-radius: 50%;
+}
+
+/* 詳細の見出しの横に置く、文字つきのボタン */
+.labeled {
+  display: inline-flex;
+  flex: none;
+  gap: 6px;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mantine-color-text);
+  cursor: pointer;
+  background: var(--app-paper);
+  border: 1px solid var(--app-rule-strong);
+  border-radius: 8px;
+}
+
+.labeled[aria-pressed="true"] {
+  background: var(--app-mikan-wash);
+}
+
+.icon:hover,
+.labeled:hover {
+  border-color: var(--app-mikan-deep);
+}
+
+.icon:focus-visible,
+.labeled:focus-visible {
+  outline: 2px solid var(--app-mikan-deep);
+  outline-offset: 2px;
+}

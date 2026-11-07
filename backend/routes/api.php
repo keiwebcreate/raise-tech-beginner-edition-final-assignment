@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\RecipeController;
 use App\Http\Controllers\Api\TagController;
@@ -21,6 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/tags', [TagController::class, 'index']);
 
+    Route::get('/recipes', [RecipeController::class, 'index']);
     Route::post('/recipes', [RecipeController::class, 'store']);
     Route::get('/recipes/{recipe}', [RecipeController::class, 'show']);
+
+    Route::put('/recipes/{recipe}/favorite', [FavoriteController::class, 'store']);
+    Route::delete('/recipes/{recipe}/favorite', [FavoriteController::class, 'destroy']);
 });

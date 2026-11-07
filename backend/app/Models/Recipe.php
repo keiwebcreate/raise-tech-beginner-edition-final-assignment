@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read string|null $cooking_logs_max_cooked_on 一覧（RecipeQuery）で読むときだけ入る、最後に作った日
+ */
 #[Fillable(['category_id', 'name', 'name_kana', 'servings', 'cook_minutes', 'memo', 'photo_path', 'is_favorite'])]
 class Recipe extends Model
 {
