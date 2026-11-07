@@ -1,0 +1,42 @@
+.drop {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  padding: 20px 8px;
+  color: var(--app-ink-dim);
+  text-align: center;
+}
+
+.drop strong {
+  color: var(--mantine-color-text);
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--app-ink-dim);
+}
+
+.current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.photo {
+  display: block;
+  width: 200px;
+  max-width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}

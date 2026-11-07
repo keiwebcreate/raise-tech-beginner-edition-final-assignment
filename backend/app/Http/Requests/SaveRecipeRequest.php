@@ -3,23 +3,39 @@
 namespace App\Http\Requests;
 
 use App\Support\TextNormalizer;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
-// A-10 レシピ登録の入力チェック（API 設計書 A-10）。写真は写真のイシューで足す
+// A-10 レシピ登録・A-11 レシピ編集の入力チェック（API 設計書 A-10・A-11）
 class SaveRecipeRequest extends FormRequest
 {
+    // 5000万画素まで。容量が小さくても、画素数が多い画像は開くのに大量のメモリを使う
+    private const PHOTO_MAX_PIXELS = 50_000_000;
+
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
         return [
+            // mimes はファイル名ではなく中身で確かめる（N-27）
+            'photo' => [
+                'bail', 'nullable', 'file', 'mimes:jpeg,jpg,png,webp', 'max:5120',
+                function (string $attribute, UploadedFile $value, Closure $fail) {
+                    $size = @getimagesize((string) $value->getRealPath());
+                    if ($size !== false && $size[0] * $size[1] > self::PHOTO_MAX_PIXELS) {
+                        $fail('写真の画素数が多すぎます。別の写真を選んでください');
+                    }
+                },
+            ],
+            'remove_photo' => ['nullable', 'boolean'],
             'name' => ['required', 'string', 'max:100'],
             // ひらがな・長音・空白だけ
             'name_kana' => ['nullable', 'string', 'max:100', 'regex:/^[ぁ-ゖゝゞー ]+$/u'],

@@ -130,7 +130,7 @@ Windows 11 で作っています。くわしくは [詳細設計書 3章](docs/d
 | もの | 場所 | コマンド | ポート |
 |---|---|---|---|
 | DB | ルート | `docker compose up -d` | 3308 |
-| Laravel | `backend/` | `php85 artisan serve` | 8000 |
+| Laravel | `backend/` | `pwsh ./serve.ps1`（写真を 5MB まで送れる設定で起動する） | 8000 |
 | Next.js | `frontend/` | `npm run dev` | 3000 |
 
 ブラウザで `http://localhost:3000` を開きます。`/api` と `/sanctum` は、Next.js が Laravel に転送します。

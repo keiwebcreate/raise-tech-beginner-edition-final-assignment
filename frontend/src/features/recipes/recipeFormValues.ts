@@ -16,9 +16,28 @@ export type RecipeFormValues = {
   ingredients: IngredientRow[];
   steps: StepRow[];
   memo: string;
+  // 新しく選んだ写真
+  photo: File | null;
+  // 今の写真を消す印
+  remove_photo: boolean;
 };
 
 export const MAX_ROWS = 50;
+
+// サーバーの決まり（SaveRecipeRequest）と同じ
+export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+
+// 送る前に確かめる（大きなファイルを送る時間を無駄にしない）。問題がなければ null
+export function photoError(file: File): string | null {
+  if (!PHOTO_TYPES.some((type) => type === file.type)) {
+    return "写真は JPEG・PNG・WebP のどれかにしてください";
+  }
+  if (file.size > PHOTO_MAX_BYTES) {
+    return "写真は5MBまでにしてください";
+  }
+  return null;
+}
 
 export function newIngredientRow(): IngredientRow {
   return { key: randomId(), name: "", quantity: "" };
@@ -39,6 +58,8 @@ export function initialRecipeFormValues(): RecipeFormValues {
     ingredients: [newIngredientRow()],
     steps: [newStepRow()],
     memo: "",
+    photo: null,
+    remove_photo: false,
   };
 }
 
@@ -58,6 +79,8 @@ export function recipeToFormValues(recipe: Recipe): RecipeFormValues {
     })),
     steps: recipe.steps.map((row) => ({ key: randomId(), body: row.body })),
     memo: recipe.memo ?? "",
+    photo: null,
+    remove_photo: false,
   };
 }
 
@@ -84,6 +107,11 @@ export function toRecipeFormData(values: RecipeFormValues): {
   appendIfFilled("memo", values.memo);
   for (const tag of values.tags) {
     data.append("tags[]", tag);
+  }
+  if (values.photo !== null) {
+    data.append("photo", values.photo);
+  } else if (values.remove_photo) {
+    data.append("remove_photo", "1");
   }
 
   const sentRows: SentRows = { ingredients: [], steps: [] };

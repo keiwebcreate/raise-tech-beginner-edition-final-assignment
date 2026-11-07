@@ -24,6 +24,12 @@ return [
     'string' => ':attributeは文字で入力してください',
 
     'custom' => [
+        'photo' => [
+            'file' => '写真を送れませんでした。もう一度選んでください',
+            'uploaded' => '写真を送れませんでした。もう一度選んでください',
+            'mimes' => '写真は JPEG・PNG・WebP のどれかにしてください',
+            'max' => '写真は5MBまでにしてください',
+        ],
         'category_id' => [
             'required' => 'カテゴリを選んでください',
         ],
@@ -49,6 +55,8 @@ return [
         'servings' => '何人分',
         'cook_minutes' => '調理時間',
         'memo' => 'メモ',
+        'photo' => '写真',
+        'remove_photo' => '写真の削除',
         'tags' => 'タグ',
         'tags.*' => 'タグ',
         'ingredients' => '材料',

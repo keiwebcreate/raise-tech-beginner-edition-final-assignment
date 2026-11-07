@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Recipe;
+use App\Support\RecipePhotoStorage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,8 @@ class RecipeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $photos = app(RecipePhotoStorage::class);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -32,9 +35,8 @@ class RecipeResource extends JsonResource
             'cook_minutes' => $this->cook_minutes,
             'memo' => $this->memo,
             'is_favorite' => $this->is_favorite,
-            // 写真は写真のイシューで足す
-            'photo_url' => null,
-            'thumb_url' => null,
+            'photo_url' => $photos->largeUrl($this->photo_path),
+            'thumb_url' => $photos->thumbUrl($this->photo_path),
             'tags' => TagResource::collection($this->tags),
             'ingredients' => $this->ingredients->map(fn ($row) => [
                 'name' => $row->name,

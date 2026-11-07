@@ -52,7 +52,8 @@
 - 持ち主の作成とログインが完了（イシュー #28）：`app:create-owner`、A-02・A-04、`shared/api/client.ts`、S-01、`proxy.ts`。ログアウト（F-52）とパスワード変更（F-53）は「設定」のイシューで作る
 - レシピの登録と詳細が完了（イシュー #30）：`TextNormalizer`、A-06・A-07・A-09・A-10、`SaveRecipeAction`、共通のヘッダー、S-03（表示だけ）、S-04、S-07。写真の欄と詳細の操作ボタン、ヘッダーの「設定」はそれぞれのイシューで足す
 - レシピ一覧・検索・お気に入りが完了（イシュー #32）：A-08・A-13・A-14、`RecipeQuery`、S-02、★（一覧と詳細）、検索条件と URL の変換、「一覧に戻る」で条件を戻す動き。写真は「写真」のイシューで足す
-- レシピの編集・削除・複製が完了（イシュー #34）：A-11・A-12・A-15、`DeleteRecipeAction`・`CopyRecipeAction`、S-05、D-01・D-04、詳細のボタン。写真の差し替えと、複製・削除のときの写真の扱いは「写真」のイシューで足す
+- レシピの編集・削除・複製が完了（イシュー #34）：A-11・A-12・A-15、`DeleteRecipeAction`・`CopyRecipeAction`、S-05、D-01・D-04、詳細のボタン。
+- レシピの完成写真が完了（イシュー #40）：`RecipePhotoStorage`、A-08〜A-12・A-15 の写真、フォームの写真の欄、「No Image」の画像（`NoImage.tsx`、SVG）。本番の S3 の設定は公開のイシューで行う
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -66,14 +67,16 @@
 - 開発用の DB には、ユーザーの依頼で確認用の持ち主 `owner@example.com` を作った（パスワードは Git に書かない。ユーザーに伝え済み）。アカウントは1つだけなので、`app:create-owner` は断られる
 - 開発用の DB には、確認で作ったレシピが入っている（`肉じゃが` など）。消してよい
 - 手元に Playwright のブラウザを入れていないので、通しのテストは入っている Chrome で動かす（`node_modules/.cache/pw-local.config.cjs`。Git に入らない。消えたら作り直す）。WebKit・Firefox は CI で確かめる
-- 通しのテストを手元で動かすときは、開発用の DB にレシピが増えないよう `recipe_app_test` につなぐ。`php85 artisan serve` は環境変数の `DB_DATABASE` を子プロセスに渡さないので、`$env:DB_DATABASE='recipe_app_test'` のあと、`backend/public` の中で `php85 -S 127.0.0.1:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php` を実行して起動する。Pest を動かすと空になるので、そのあとカテゴリのシーダーとテスト用の持ち主を入れ直す
+- 通しのテストを手元で動かすときは、開発用の DB にレシピが増えないよう `recipe_app_test` につなぐ。`$env:DB_DATABASE='recipe_app_test'` のあと `backend/serve.ps1` で起動する（`php85 artisan serve` は環境変数の `DB_DATABASE` を子プロセスに渡さないので使えない）。テストで保存した写真は `backend/storage/app/private/recipes/` に残る（Git に入らない）。Pest を動かすと空になるので、そのあとカテゴリのシーダーとテスト用の持ち主を入れ直す
 - `claude-security` のスキャンには Workflow ツールが要る。使えないセッションでは `security-review` で見直す
 
 ## 次にやること
 
-1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：写真 → 作った記録 → 設定
+1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：作った記録 → 設定
 
 ## 構築の前に確かめること
+
+- 写真を 5MB まで送れるよう、本番の PHP に `upload_max_filesize=6M`・`post_max_size=8M`、Nginx に `client_max_body_size 8m` を設定する。PHP の拡張機能 `exif`（写真の向きの補正）も入れる
 
 - `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）になっているかを確かめる
 - 前のアプリ（beginner_version）で、作業用の IAM ユーザーが組織の制限（SCP）で EC2 などを拒否されていた。同じ AWS アカウントを使うなら、解決しているかを確かめる
