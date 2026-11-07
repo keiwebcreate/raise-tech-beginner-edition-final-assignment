@@ -19,13 +19,14 @@
 | [database-design.md](database-design.md)（テーブル設計書） | 1.1 | 照合順序を変更（2026-11-03） |
 | [api-design.md](api-design.md)（API 設計書） | 1.0 | 確定（2026-11-03） |
 | [aws-design.md](aws-design.md)（AWS 構成設計書） | 1.1 | Node.js 24・照合順序を反映（2026-11-03） |
-| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.0 | 確定（2026-11-03） |
+| [detailed-design.md](detailed-design.md)（詳細設計書） | 1.1 | CI の MySQL の起動方法を追加（2026-11-07） |
 
 ## GitHub の設定
 
 - main はルールセット「main を保護」で保護：PR でのマージだけ許可（承認0人）、強制 push・削除は禁止、例外なし
 - マージ方法は Squash and merge だけ。マージしたブランチは自動で消える
-- 自動テスト（GitHub Actions）を作ったら、「テストが通らないとマージできない」ルールを足す
+- 自動テスト（`ci.yml`）のジョブ backend・frontend・e2e の成功も必須（2026-11-07）。ジョブの名前を変えるときは、ルールセットも直す
+- `.github/workflows/` を変えた push は、`git -c credential.helper= -c "credential.https://github.com.helper=!gh auth git-credential" push` で送る
 
 ## Claude Code の準備（Git には入れていない）
 
@@ -33,7 +34,7 @@
 - `.claude/skills/frontend-design/`：公式の frontend-design スキル
 - claude-security プラグイン：CLI の `claude plugin install claude-security@claude-plugins-official --scope user` で導入済み（VS Code の拡張では `/plugin` が使えない）
 
-## 今の状態（2026-11-03）
+## 今の状態（2026-11-07）
 
 - 要件定義が完了（イシュー #1・PR #2）
 - 基本設計の前半が完了（イシュー #3）：技術スタック 版1.0、画面設計書 版1.0、モックアップ
@@ -44,6 +45,7 @@
 - AWS 構成設計が完了（イシュー #14）：AWS 構成設計書 版1.0。**基本設計はこれで全部終わり**
 - 詳細設計が完了（イシュー #16）：詳細設計書 版1.0。照合順序を `utf8mb4_ja_0900_as_cs` に、Node.js を 24 に変更（MySQL・Amazon Linux で確かめた結果）
 - 環境構築が完了（イシュー #18）：開発用の MySQL、Laravel 13・Next.js 16 のひな形、テストとチェックの道具
+- 自動テストが完了（イシュー #20）：`ci.yml`（backend・frontend・e2e）と、main の保護への追加。型チェックは `npm run typecheck` を使う（`next typegen` で Next.js の型を作ってから `tsc` を動かす）
 
 ## 開発環境のメモ（詳細設計書 3章・README「開発環境の作り方」）
 
@@ -56,8 +58,7 @@
 
 ## 次にやること
 
-1. GitHub Actions（`ci.yml`：backend・frontend・e2e）と、main の保護に「CI の成功」を足す
-2. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：テーブルとシーダー（カテゴリ12個）→ 持ち主の作成コマンドとログイン（S-01・F-61）→ レシピの登録・詳細 → 一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
+1. 機能ごとに実装（イシュー → ブランチ → PR）。おすすめの順：テーブルとシーダー（カテゴリ12個）→ 持ち主の作成コマンドとログイン（S-01・F-61）→ レシピの登録・詳細 → 一覧・検索 → 編集・削除・複製 → 写真 → 作った記録 → 設定
 
 ## 構築の前に確かめること
 

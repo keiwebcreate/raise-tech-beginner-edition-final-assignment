@@ -1,0 +1,182 @@
+# 自動テスト（詳細設計書 6.3、イシュー #20）
+# PR を作ったとき・PR のブランチに push したときと、main に反映したとき（マージ）に走る。
+# ジョブの名前（backend・frontend・e2e）は、main のルールセットの「成功が必須のチェック」に登録している。変えるときはルールセットも直す
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 同じ PR に続けて push したら、前の実行は止めて新しいほうだけを走らせる
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# リポジトリの中身を読むだけ（書き込みはしない）
+permissions:
+  contents: read
+
+env:
+  # compose.yaml と Laravel が読む DB のパスワード。
+  # 実行のたびに作って捨てる、外からつなげない DB なので、秘密の情報ではない（本番や開発のパスワードとは別）
+  RECIPE_DB_PASSWORD: ci-only-password
+
+jobs:
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: PHP 8.5 を用意する
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, intl, gd, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - name: Composer のキャッシュの場所を調べる
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      # ダウンロードしたパッケージを次回のために取っておく
+      - name: パッケージのキャッシュ
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: composer-
+
+      # composer.lock のとおりに入れる
+      - name: パッケージを入れる
+        run: composer install --no-interaction --no-progress
+
+      - name: 設定ファイルを用意する
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # 開発と同じ compose.yaml で MySQL 8.4 を起動する（照合順序とテスト用の DB も同じになる）
+      - name: DB を起動する
+        working-directory: .
+        run: docker compose up -d --wait --wait-timeout 120
+
+      - name: 書き方のチェック（Pint）
+        run: vendor/bin/pint --test
+
+      - name: コードのチェック（Larastan）
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: テスト（Pest）
+        run: php artisan test
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Node.js を用意する（frontend/.node-version の版）
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: frontend/.node-version
+          # ダウンロードしたパッケージを次回のために取っておく
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # package-lock.json のとおりに入れる（npm install と違い、lock ファイルを書き換えない）
+      - name: パッケージを入れる
+        run: npm ci
+
+      - name: コードのチェック（Biome）
+        run: npm run lint
+
+      - name: 型チェック
+        run: npm run typecheck
+
+      - name: テスト（Vitest）
+        run: npm test
+
+      - name: 本番用の作成
+        run: npm run build
+
+  # 通しのテスト：DB・Laravel・Next.js を本当に起動して、ブラウザで動かす
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: PHP 8.5 を用意する
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, intl, gd, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - name: Node.js を用意する（frontend/.node-version の版）
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: frontend/.node-version
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: DB を起動する
+        run: docker compose up -d --wait --wait-timeout 120
+
+      - name: Laravel を用意する
+        working-directory: backend
+        run: |
+          composer install --no-interaction --no-progress
+          cp .env.example .env
+          php artisan key:generate
+          php artisan migrate --force
+
+      - name: Next.js を作成する
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      # Chrome・Firefox・Safari 系（WebKit）と、動かすのに要る部品を入れる
+      - name: Playwright のブラウザを入れる
+        working-directory: frontend
+        run: npx playwright install --with-deps
+
+      # & で裏で動かす。ログは失敗したときに見られるように、ファイルに残す
+      - name: Laravel と Next.js を起動する
+        run: |
+          mkdir -p "$RUNNER_TEMP/server-logs"
+          (cd backend && nohup php artisan serve --port=8000 > "$RUNNER_TEMP/server-logs/laravel.log" 2>&1 &)
+          (cd frontend && nohup npm run start > "$RUNNER_TEMP/server-logs/next.log" 2>&1 &)
+          # 応答するまで待つ（どちらも最大60秒）
+          curl --silent --output /dev/null --retry 30 --retry-delay 2 --retry-connrefused http://localhost:8000/up
+          curl --silent --output /dev/null --retry 30 --retry-delay 2 --retry-connrefused http://localhost:3000/
+
+      - name: 通しのテスト（Playwright）
+        working-directory: frontend
+        run: npm run e2e
+
+      # 失敗したときは、ブラウザの記録とサーバーのログを GitHub の画面からダウンロードできるようにする
+      - name: 結果を保存する（失敗したときだけ）
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-results
+          path: |
+            frontend/test-results/
+            ${{ runner.temp }}/server-logs/
+          retention-days: 7
