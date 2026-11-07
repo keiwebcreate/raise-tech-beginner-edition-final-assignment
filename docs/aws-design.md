@@ -2,7 +2,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| 版 | 1.3 |
+| 版 | 1.4 |
 | 作成日 | 2026-11-03 |
 | 状態 | 確定 |
 | リージョン | シドニー（`ap-southeast-2`）。組織の制限（SCP）で東京などは使えない |
@@ -145,7 +145,7 @@ CloudFront ─80─▶ Nginx ─┬─ /                    → Next.js（Node.j
 
 | 名前 | 中身 | 作り方 |
 |---|---|---|
-| `APP_KEY` | Laravel の暗号化の鍵 | パソコンで作って AWS CLI で入れる |
+| `APP_KEY` | Laravel の暗号化の鍵 | Terraform が作って入れる。`terraform destroy` で一緒に消せる。state には残さない |
 | `DB_PASSWORD` | RDS のパスワード | Terraform がばらばらの文字列を作って入れる。`ephemeral` と書き込み専用の項目を使い、state には残さない |
 | `DB_HOST`・`DB_PORT`・`DB_DATABASE`・`DB_USERNAME`・`AWS_BUCKET`・`AWS_DEFAULT_REGION` | 接続先など（秘密ではないが一緒に置く） | Terraform が入れる |
 
@@ -162,12 +162,13 @@ CloudFront ─80─▶ Nginx ─┬─ /                    → Next.js（Node.j
 | 役割 | 使う人・物 | 許すこと |
 |---|---|---|
 | EC2 の役割 | EC2 | Session Manager・Run Command で操作される（AWS の標準の権限）。写真用バケットの読み書き・削除。デプロイ用バケットの読み取り。`/recipe-app/prod/` のパラメータの読み取り |
-| デプロイの役割 | GitHub Actions | デプロイ用バケットへの書き込み。この EC2 への入れ替えの命令（Run Command）と、その結果の確認 |
+| デプロイ専用の IAM ユーザー `recipe-app-deploy` | GitHub Actions | デプロイ用バケットへの書き込み。この EC2 への入れ替えの命令（Run Command）と、その結果の確認 |
 | 作業用の IAM ユーザー | 自分（Terraform・AWS CLI） | 構成を作る・消す |
 
 - EC2 の役割に付ける AWS 標準の権限（`AmazonSSMManagedInstanceCore`）は、パラメータの読み取りをすべてのパラメータに許す。このアカウントのシドニーには、このアプリのパラメータしかないので、そのまま使う
-- GitHub Actions には AWS の鍵を渡さない。**OIDC**（GitHub と AWS が互いを確かめ合う仕組み）で、その時だけ使える一時的な権限を渡す。許すのは、このリポジトリの main ブランチからの実行だけ
-- **未解決（2026-11-07）：** 組織の制限で OIDC の一覧の取得が拒否され、作成も権限の試算で拒否と出た。段階3の前に、デプロイの認証の方法を決め直す
+- GitHub Actions には、デプロイ専用の IAM ユーザーの鍵を、GitHub の秘密の情報として渡す。**OIDC**（GitHub と AWS が互いを確かめ合う仕組み）を予定していたが、組織の制限で OIDC の一覧の取得が拒否され、作成も権限の試算で拒否と出たので、ユーザーの決定で変更した（2026-11-07）
+- デプロイが動くのは、このリポジトリの main からだけ（`deploy.yml` の条件）。鍵は Terraform で作らず（state に残るため）、ユーザーが AWS CLI で作って GitHub に直接渡す。提出後に `terraform destroy` と `gh secret delete` で消す
+- この鍵を持つ人は、EC2 で命令を動かせる。全部消す前提の環境なので、この範囲で受け入れる
 
 ---
 
@@ -270,3 +271,4 @@ sequenceDiagram
 | 1.1 | 2026-11-03 | 詳細設計の確認の結果を反映：Node.js を 24 に、照合順序を `utf8mb4_ja_0900_as_cs` に |
 | 1.2 | 2026-11-07 | リージョンを東京からシドニーに変更（組織の制限のため）。OIDC が使えない見込みを6章に記載 |
 | 1.3 | 2026-11-07 | 段階2の実装に合わせて、5.5（パスワードを state に残さない書き方、パラメータの名前、DB のユーザー）を更新 |
+| 1.4 | 2026-11-07 | 段階3の実装に合わせて、5.5（`APP_KEY` の作り方）・6章（OIDC からデプロイ専用の IAM ユーザーに変更）を更新 |

@@ -405,7 +405,7 @@ src/
 
 ```
 /opt/recipe-app/
-├─ releases/<コミットの番号>/   版ごとのフォルダ（新しいものを3つまで残す）
+├─ releases/<コミットの番号>-<時刻>/   版ごとのフォルダ（新しいものを3つまで残す）
 ├─ current → releases/<今の版>  いま使っている版を指す印（シンボリックリンク）
 └─ shared/
     ├─ .env                    Parameter Store から作る
@@ -414,13 +414,20 @@ src/
 
 ### 7.3 EC2 で動く手順
 
-1. S3 からファイルを取り、`releases/<番号>/` に広げる
-2. Parameter Store から読んで `shared/.env` を作り、`shared/` の中身をつなぐ
-3. `php artisan migrate --force`（DB の変更）
+手順は `deploy/deploy.sh`、EC2 の準備は `deploy/setup.sh` に書く。
+
+1. S3 からファイルを取り、`releases/<番号>-<時刻>/` に広げる
+2. `setup.sh` で、PHP・Node.js・Nginx などを入れて設定を置く（何度動かしても同じ結果になる）
+3. Parameter Store から読んで `shared/.env` を作り、`shared/` の中身をつなぐ
 4. `php artisan config:cache`・`route:cache`（設定を速く読めるようにする）
-5. `current` を新しい版に付け替える
-6. PHP-FPM と Next.js（systemd）を再起動する
-7. `GET /api/me` が 401 を返すこと（＝ Laravel が動いていること）を確かめる。だめなら `current` を前の版に戻して、失敗を知らせる
+5. `php artisan migrate --force`（DB の変更）と、カテゴリの登録
+6. `current` を新しい版に付け替える
+7. PHP-FPM と Next.js（systemd）を再起動する
+8. `GET /api/me` が 401、`/login` が 200、`/` が 307 を返すことを確かめる。だめなら `current` を前の版に戻して、失敗を知らせる
+
+- Next.js の `proxy.ts` は、Nginx の EC2 の中だけの入口（`127.0.0.1:8081`）から Laravel を呼ぶ
+- GitHub Actions は、EC2 と同じ ARM の環境（`ubuntu-24.04-arm`）でビルドする
+- DB との通信は、RDS の証明書（`shared/rds-ca.pem`）で確かめて暗号化する
 
 - DB の変更（マイグレーション）は、前の版でも動く形（列を足すだけなど）にする。戻すときに DB は戻さないため
 
@@ -477,3 +484,4 @@ src/
 | 1.5 | 2026-11-07 | 編集の実装に合わせて、4.7（送られなかった任意の項目の扱い）を追加 |
 | 1.6 | 2026-11-07 | 写真の実装に合わせて、3章（`exif`、Laravel の起動方法）・4.6（画素数の上限、読み取れない画像、複製、表示）を更新 |
 | 1.7 | 2026-11-07 | 設定の実装に合わせて、4.4（ほかの端末のログインを切る仕組み）・6.2（パスワードを変える通しのテストの動かし方）を追加 |
+| 1.8 | 2026-11-07 | デプロイの実装に合わせて、7.2・7.3 を更新 |
