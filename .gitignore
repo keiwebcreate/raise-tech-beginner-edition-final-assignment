@@ -11,3 +11,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# 操作の録画の元ファイル（大きいので Git に入れない。圧縮したものは docs/demo/ に置く）
+/*.mp4
