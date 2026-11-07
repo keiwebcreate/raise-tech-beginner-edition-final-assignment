@@ -8,9 +8,9 @@ RaiseTech 初級編の最終課題として、**要件定義から設計・開�
 
 AWS に公開したアプリを、ブラウザで操作した様子です（約2分30秒、音声なし）。費用を抑えるため、提出のあとに AWS の環境は消します。動画のアドレスバーの URL は開けなくなるので、動作はこの動画でご確認ください。
 
-**[▶ 動画を見る](docs/demo/recipe-box-demo.mp4)**
+https://github.com/user-attachments/assets/b4654e8c-5254-49c4-901c-8bcc54d295a8
 
-[![操作の動画の一場面：登録したレシピの詳細画面](docs/demo/thumbnail.jpg)](docs/demo/recipe-box-demo.mp4)
+再生できないときは、[動画のファイル](docs/demo/recipe-box-demo.mp4) をダウンロードしてご覧ください。
 
 | 時間（おおよそ） | 映っている操作 |
 |---|---|
