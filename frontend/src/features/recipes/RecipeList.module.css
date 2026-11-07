@@ -209,7 +209,14 @@
   margin-top: 4px;
   font-size: 13px;
   color: var(--app-ink-dim);
-  overflow-wrap: anywhere;
+}
+
+/* 長いタグ名は1行で省略する */
+.tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* リスト：細い線で区切った行 */
