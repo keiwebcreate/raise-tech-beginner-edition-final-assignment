@@ -2,7 +2,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| 版 | 1.4 |
+| 版 | 1.5 |
 | 作成日 | 2026-11-03 |
 | 状態 | 確定 |
 | リージョン | シドニー（`ap-southeast-2`）。組織の制限（SCP）で東京などは使えない |
@@ -147,7 +147,8 @@ CloudFront ─80─▶ Nginx ─┬─ /                    → Next.js（Node.j
 |---|---|---|
 | `APP_KEY` | Laravel の暗号化の鍵 | Terraform が作って入れる。`terraform destroy` で一緒に消せる。state には残さない |
 | `DB_PASSWORD` | RDS のパスワード | Terraform がばらばらの文字列を作って入れる。`ephemeral` と書き込み専用の項目を使い、state には残さない |
-| `DB_HOST`・`DB_PORT`・`DB_DATABASE`・`DB_USERNAME`・`AWS_BUCKET`・`AWS_DEFAULT_REGION` | 接続先など（秘密ではないが一緒に置く） | Terraform が入れる |
+| `DB_HOST`・`DB_PORT`・`DB_DATABASE`・`DB_USERNAME`・`AWS_BUCKET`・`AWS_DEFAULT_REGION`・`APP_URL`・`SANCTUM_STATEFUL_DOMAINS` | 接続先など（秘密ではないが一緒に置く） | Terraform が入れる |
+| `ORIGIN_SECRET` | CloudFront から EC2 への秘密のヘッダー（4章）の値 | Terraform が作って入れる。CloudFront の設定に書く必要があるので、この値だけは state に残る |
 
 - デプロイのたびに、EC2 がここから読んで Laravel の `.env` を作る。`.env` は EC2 の外に出さない
 - Terraform の記録（state）は Git に入れない（前のアプリと同じ）
@@ -272,3 +273,4 @@ sequenceDiagram
 | 1.2 | 2026-11-07 | リージョンを東京からシドニーに変更（組織の制限のため）。OIDC が使えない見込みを6章に記載 |
 | 1.3 | 2026-11-07 | 段階2の実装に合わせて、5.5（パスワードを state に残さない書き方、パラメータの名前、DB のユーザー）を更新 |
 | 1.4 | 2026-11-07 | 段階3の実装に合わせて、5.5（`APP_KEY` の作り方）・6章（OIDC からデプロイ専用の IAM ユーザーに変更）を更新 |
+| 1.5 | 2026-11-07 | 段階4の実装に合わせて、5.5（秘密のヘッダーの値）を更新 |

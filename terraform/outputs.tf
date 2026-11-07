@@ -1,3 +1,8 @@
+output "app_url" {
+  description = "アプリの住所"
+  value       = "https://${aws_cloudfront_distribution.main.domain_name}"
+}
+
 output "ec2_instance_id" {
   description = "Session Manager で入るときに指定する EC2 の ID"
   value       = aws_instance.app.id

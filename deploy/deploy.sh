@@ -48,7 +48,7 @@ MAIL_MAILER=log
 EOF
   aws ssm get-parameters-by-path --path "$PARAMETER_PATH" --with-decryption \
     --query 'Parameters[].[Name,Value]' --output text |
-    awk -F'\t' '{ n = split($1, part, "/"); printf "%s=\"%s\"\n", part[n], $2 }'
+    awk -F'\t' '$1 !~ /\/ORIGIN_SECRET$/ { n = split($1, part, "/"); printf "%s=\"%s\"\n", part[n], $2 }'
 } >"$ENV_TMP"
 chown root:apache "$ENV_TMP"
 mv -f "$ENV_TMP" "$SHARED/.env"
@@ -82,9 +82,9 @@ switch_to() {
 
 # 待ちながら、決まった応答が返るかを確かめる
 expect_status() {
-  local expected="$1" url="$2" status=""
+  local expected="$1" url="$2" header="${3:-X-None: 1}" status=""
   for _ in $(seq 1 15); do
-    status="$(curl -s -o /dev/null -w '%{http_code}' -H 'Accept: application/json' "$url" || true)"
+    status="$(curl -s -o /dev/null -w '%{http_code}' -H 'Accept: application/json' -H "$header" "$url" || true)"
     [ "$status" = "$expected" ] && return 0
     sleep 2
   done
@@ -95,10 +95,14 @@ expect_status() {
 switch_to "$RELEASE"
 
 echo "== 6. 動いていることを確かめる"
+# 80番は、CloudFront と同じ秘密のヘッダーを付けて確かめる。付けなければ断られること（403）も確かめる
+ORIGIN_SECRET="$(aws ssm get-parameter --name "$PARAMETER_PATH/ORIGIN_SECRET" --with-decryption --query Parameter.Value --output text)"
+VERIFY="X-Origin-Verify: $ORIGIN_SECRET"
 if ! { expect_status 401 http://127.0.0.1:8081/api/me &&
-  expect_status 401 http://127.0.0.1/api/me &&
-  expect_status 200 http://127.0.0.1/login &&
-  expect_status 307 http://127.0.0.1/; }; then
+  expect_status 403 http://127.0.0.1/login &&
+  expect_status 401 http://127.0.0.1/api/me "$VERIFY" &&
+  expect_status 200 http://127.0.0.1/login "$VERIFY" &&
+  expect_status 307 http://127.0.0.1/ "$VERIFY"; }; then
   if [ -n "$PREVIOUS" ] && [ -d "$PREVIOUS" ] && [ "$PREVIOUS" != "$RELEASE" ]; then
     echo "失敗したので、前の版に戻します" >&2
     switch_to "$PREVIOUS"

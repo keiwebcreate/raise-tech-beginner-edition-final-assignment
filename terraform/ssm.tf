@@ -12,18 +12,21 @@ locals {
     AWS_BUCKET         = aws_s3_bucket.main["photos"].bucket
     AWS_DEFAULT_REGION = var.region
 
-    # CloudFront を作るまでの仮の住所（段階4で本当の住所に変える）
-    APP_URL                  = "http://localhost"
-    SANCTUM_STATEFUL_DOMAINS = "localhost"
+    APP_URL                  = "https://${aws_cloudfront_distribution.main.domain_name}"
+    SANCTUM_STATEFUL_DOMAINS = aws_cloudfront_distribution.main.domain_name
+
+    # Nginx が CloudFront からの要求かを確かめる値（deploy/deploy.sh）
+    ORIGIN_SECRET = random_password.origin_secret.result
   }
 }
 
 resource "aws_ssm_parameter" "main" {
-  for_each = local.parameters
+  # ORIGIN_SECRET が sensitive なので、キーの一覧だけを取り出して回す
+  for_each = nonsensitive(toset(keys(local.parameters)))
 
   name  = "${local.parameter_prefix}/${each.key}"
   type  = "SecureString"
-  value = each.value
+  value = local.parameters[each.key]
 }
 
 resource "aws_ssm_parameter" "db_password" {

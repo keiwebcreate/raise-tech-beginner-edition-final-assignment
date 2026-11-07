@@ -19,6 +19,11 @@ chmod 755 /opt/recipe-app "$SHARED"
 curl -fsSL -o "$SHARED/rds-ca.pem" https://truststore.pki.rds.amazonaws.com/ap-southeast-2/ap-southeast-2-bundle.pem
 chmod 644 "$SHARED/rds-ca.pem"
 
+# CloudFront を通ったことを示す秘密のヘッダーの確かめ方。root だけが読める
+ORIGIN_SECRET="$(aws ssm get-parameter --region ap-southeast-2 --name /recipe-app/prod/ORIGIN_SECRET --with-decryption --query Parameter.Value --output text)"
+install -m 600 /dev/null /etc/nginx/recipe-origin.conf
+printf 'map $http_x_origin_verify $origin_ok {\n    default 0;\n    "%s" 1;\n}\n' "$ORIGIN_SECRET" >/etc/nginx/recipe-origin.conf
+
 install -m 644 "$HERE/nginx.conf" /etc/nginx/nginx.conf
 install -m 644 "$HERE/php.ini" /etc/php.d/99-recipe.ini
 install -m 644 "$HERE/recipe-next.service" /etc/systemd/system/recipe-next.service

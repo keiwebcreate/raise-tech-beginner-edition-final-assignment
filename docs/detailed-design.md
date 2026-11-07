@@ -184,7 +184,7 @@ app/
 | ログイン成功 | セッションの番号を作り直す |
 | パスワード変更 | 今のパスワードを確かめてから変え、ほかの端末のログインを切る（`logoutOtherDevices`）。ほかのセッションは Sanctum の `AuthenticateSession`（`config/sanctum.php`）が、保持のクッキーは Laravel が、パスワードの変化を見つけて切る |
 | 持ち主の作成 | `php artisan app:create-owner` でメールアドレスとパスワードを聞いて作る。すでに1人いれば断る |
-| 本番の接続元の IP | CloudFront と Nginx を通るので、Laravel に「信頼できる中継」を設定し、本当の接続元の IP を使う |
+| 本番の接続元の IP | CloudFront と Nginx を通る。Laravel には中継を信じさせず、Nginx が CloudFront の `CloudFront-Viewer-Address` から取り出した IP を `REMOTE_ADDR` として渡す。利用者が送る `X-Forwarded-*` は Laravel に見せない（`deploy/nginx.conf`） |
 
 ### 4.5 一覧の検索（RecipeQuery）
 
@@ -485,3 +485,4 @@ src/
 | 1.6 | 2026-11-07 | 写真の実装に合わせて、3章（`exif`、Laravel の起動方法）・4.6（画素数の上限、読み取れない画像、複製、表示）を更新 |
 | 1.7 | 2026-11-07 | 設定の実装に合わせて、4.4（ほかの端末のログインを切る仕組み）・6.2（パスワードを変える通しのテストの動かし方）を追加 |
 | 1.8 | 2026-11-07 | デプロイの実装に合わせて、7.2・7.3 を更新 |
+| 1.9 | 2026-11-07 | CloudFront の実装に合わせて、4.4（本番の接続元の IP）を更新 |
