@@ -565,7 +565,9 @@ function RecipeTile({ recipe }: { recipe: RecipeListItem }) {
         className={classes.link}
       >
         <NoImage />
-        <h2 className={classes.title}>{recipe.name}</h2>
+        <h2 className={classes.title} title={recipe.name}>
+          {recipe.name}
+        </h2>
         <Meta recipe={recipe} />
         <TagList tags={recipe.tags} className={classes.tileTags} />
       </Link>
@@ -588,7 +590,9 @@ function RecipeRow({ recipe }: { recipe: RecipeListItem }) {
           <NoImage />
         </div>
         <div className={classes.rowMain}>
-          <h2 className={classes.rowTitle}>{recipe.name}</h2>
+          <h2 className={classes.rowTitle} title={recipe.name}>
+            {recipe.name}
+          </h2>
           <Meta recipe={recipe} />
           <TagList tags={recipe.tags} />
         </div>

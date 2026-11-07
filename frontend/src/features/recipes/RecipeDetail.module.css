@@ -46,6 +46,13 @@
   overflow-wrap: anywhere;
 }
 
+/* 長い料理名は1行を広く使い、文字を小さくする。省略はしない */
+.long {
+  flex-basis: 100%;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
 .meta {
   display: flex;
   flex-wrap: wrap;
@@ -288,6 +295,10 @@
 
   .name {
     font-size: 26px;
+  }
+
+  .long {
+    font-size: 19px;
   }
 
   .ingredients {

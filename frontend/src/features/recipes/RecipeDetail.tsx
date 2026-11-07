@@ -8,6 +8,9 @@ import { RecipeActions } from "./RecipeActions";
 import classes from "./RecipeDetail.module.css";
 import { useRecipe } from "./useRecipe";
 
+// これより長い料理名は、文字を小さくして出す
+const LONG_NAME_LENGTH = 30;
+
 // S-03 レシピ詳細（画面設計書 4章）
 export function RecipeDetail({ id }: { id: number }) {
   const recipe = useRecipe(id);
@@ -32,7 +35,15 @@ function RecipeSheet({ recipe }: { recipe: Recipe }) {
     <article className={classes.sheet}>
       <header className={classes.head}>
         <div className={classes.titleRow}>
-          <h1 className={classes.name}>{recipe.name}</h1>
+          <h1
+            className={
+              recipe.name.length > LONG_NAME_LENGTH
+                ? `${classes.name} ${classes.long}`
+                : classes.name
+            }
+          >
+            {recipe.name}
+          </h1>
           <RecipeActions recipe={recipe} />
         </div>
         <div className={classes.meta}>

@@ -230,6 +230,33 @@ test("条件に合わないと案内を出し、クリアできる", async ({
   await expect(page).toHaveURL("/");
 });
 
+test("長い料理名は、タイルでは2行までにし、全文は詳細で読める", async ({
+  page,
+  browserName,
+}) => {
+  const word = uniqueWord(browserName);
+  const name = `${word}${"あ".repeat(100 - word.length)}`;
+  await createRecipe(page, name);
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto(`/?q=${encodeURIComponent(word)}`);
+
+  const title = page.getByRole("heading", { level: 2 });
+  await expect(title).toHaveText(name);
+  await expect(title).toHaveAttribute("title", name);
+  const { height, lineHeight } = await title.evaluate((element) => ({
+    height: element.getBoundingClientRect().height,
+    lineHeight: Number.parseFloat(getComputedStyle(element).lineHeight),
+  }));
+  expect(height).toBeLessThanOrEqual(lineHeight * 2 + 1);
+
+  await tileLink(page, word).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 test("URL の決まりに合わない条件は無視する", async ({ page }) => {
   await page.goto("/?sort=abc&max_minutes=20&page=-1&category_id=x");
 
