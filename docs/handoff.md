@@ -79,15 +79,18 @@
 
 ## 次にやること
 
-1. リポジトリの URL を提出する（ユーザー）
-2. 提出したら、ユーザーの OK のあとで全部消す（下の「全部消すときの手順」）
+提出済み（2026-11-07）。予定している作業はない。
 
 ## AWS の今の状態（2026-11-07）
 
-**全段階のものが動いていて、1日あたり約1.3ドルかかる**（設計書の見込みからの計算）。アプリは `https://d2to5ltvzdr6zd.cloudfront.net`。
+**提出のあと、全部消した。料金はかからない。** URL `https://d2to5ltvzdr6zd.cloudfront.net` はもう開けない。
 
-- シドニーに 44個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3・CloudFront など）。接続先などは `terraform output` で確かめる
-- AWS Budgets の月10ドル・20ドルの通知（AWS 構成設計書 8.2）は作っていない。アカウントには別の予算 `AWS budget`（1ドル）がある
+- GitHub の秘密の情報と変数も消した。`Deploy` のワークフローは止めてある（`gh workflow enable Deploy` で戻す）
+- `terraform/terraform.tfstate` に、消したあとの IAM ユーザーの記録だけが残っているかもしれない（Claude の権限で `terraform state rm` が止められたため）。作り直す前に `terraform state rm aws_iam_user.deploy` を動かす
+- RDS の自動スナップショットは、DB を消した数分後に自動で消えた
+- 作り直すときは下の「作り直すときに確かめること」を見る。以下のメモも、そのときに使う
+- AWS Budgets の月10ドル・20ドルの通知（AWS 構成設計書 8.2）は作らなかった。アカウントには別の予算 `AWS budget`（1ドル）がある
+- シドニーに作ると 44個（VPC・サブネット・EC2・固定の IP アドレス・RDS・S3・CloudFront など）。動かしている間は1日あたり約1.3ドルかかる（設計書の見込みからの計算）
 - GitHub の設定：秘密の情報 `AWS_ACCESS_KEY_ID`・`AWS_SECRET_ACCESS_KEY`、変数 `DEPLOY_BUCKET`・`EC2_INSTANCE_ID`。EC2 を作り直すと ID が変わるので `gh variable set` で直す。全部消したあとは `gh secret delete` と `gh variable delete` で消す
 - デプロイ専用の鍵の作り方（ユーザーが動かす。値を画面に出さず GitHub へ渡す）：`$key = aws iam create-access-key --user-name recipe-app-deploy --output json | ConvertFrom-Json` のあと、`$key.AccessKey.AccessKeyId | gh secret set AWS_ACCESS_KEY_ID`、`$key.AccessKey.SecretAccessKey | gh secret set AWS_SECRET_ACCESS_KEY`、`Remove-Variable key`
 - RDS を作るのに9分ほどかかる
@@ -103,15 +106,16 @@
 
 ユーザーの OK のあとで行う。
 
-1. `terraform/` で `terraform destroy`（CloudFront があるので時間がかかる。RDS の中身と S3 の写真も消える）
-2. `gh secret delete AWS_ACCESS_KEY_ID`、`gh secret delete AWS_SECRET_ACCESS_KEY`
-3. `gh variable delete DEPLOY_BUCKET`、`gh variable delete EC2_INSTANCE_ID`
-4. 消したあと main にマージすると `deploy.yml` が動いて失敗するので、消したら `deploy.yml` を止める（GitHub の Actions の画面で Disable、または `gh workflow disable Deploy`）
-5. AWS CLI で、シドニーに EC2・RDS・S3 などが残っていないことを確かめる
+1. `gh workflow disable Deploy`（消している最中にデプロイが動かないように。消したあとのマージで失敗もしない）
+2. `terraform/` で `terraform destroy`（2026-11-07 は数分で終わった。RDS の中身と S3 の写真も消える）
+3. IAM ユーザー `recipe-app-deploy` だけ、`iam:DeleteLoginProfile` が組織の制限で拒否されて止まる。鍵と権限は消えた状態なので、ログイン用パスワードを作っていないことを確かめて `aws iam delete-user --user-name recipe-app-deploy`、そのあと `terraform state rm aws_iam_user.deploy`
+4. `gh secret delete AWS_ACCESS_KEY_ID`、`gh secret delete AWS_SECRET_ACCESS_KEY`
+5. `gh variable delete DEPLOY_BUCKET`、`gh variable delete EC2_INSTANCE_ID`
+6. AWS CLI で、シドニーに EC2・RDS・S3 などが残っていないことを確かめる
 
 ## 作り直すときに確かめること
 
 - AWS は**絶対に東京にしない**。組織の制限（SCP）で、シドニー（`ap-southeast-2`）以外の EC2 などは拒否される（2026-11-07 に確認）
 - 同じ制限で GitHub の OIDC は作れない見込みなので、デプロイ専用の IAM ユーザーの鍵を使う
-- `terraform apply` のあと、`gh variable set` で `DEPLOY_BUCKET`・`EC2_INSTANCE_ID` を設定し、鍵を登録する。`APP_KEY` や DB のパスワードは作り直される。本番の持ち主も作り直す（Session Manager で入って `cd /opt/recipe-app/current/backend && sudo -u apache php artisan app:create-owner`）
+- `terraform apply` のあと、`gh workflow enable Deploy` で戻し、`gh variable set` で `DEPLOY_BUCKET`・`EC2_INSTANCE_ID` を設定し、鍵を登録する。`APP_KEY` や DB のパスワードは作り直される。本番の持ち主も作り直す（Session Manager で入って `cd /opt/recipe-app/current/backend && sudo -u apache php artisan app:create-owner`）
 - `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）のままにする
