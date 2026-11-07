@@ -10,7 +10,12 @@ export function safeNextPath(next: string | undefined): string {
   }
   try {
     const url = new URL(next, BASE);
-    if (url.origin !== BASE || url.pathname === "/login") {
+    // 「/.//evil.example」は整えると「//evil.example」になるので、整えたあとの形も確かめる
+    if (
+      url.origin !== BASE ||
+      url.pathname === "/login" ||
+      url.pathname.startsWith("//")
+    ) {
       return DEFAULT_PATH;
     }
     return url.pathname + url.search + url.hash;

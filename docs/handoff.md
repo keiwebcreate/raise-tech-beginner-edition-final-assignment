@@ -60,7 +60,7 @@
 - Claude は `.env` を読めない（`C:\dev\Raise_Tech\.claude\settings.json` の deny）。`.env.example` は読める
 - Claude の権限では `rm`・`Remove-Item` でのファイルの削除ができない。Git で管理しているファイルは `git rm` で消せる
 - `frontend/AGENTS.md` は `next dev` が自動で作り直すので、消さない
-- 開発用の DB に持ち主をまだ作っていない（Claude はテスト用の持ち主を入れない。アカウントは1つだけなので、本物を作れなくなる）。ログインを試すには、ユーザーが `php85 artisan app:create-owner` を実行する。持ち主が要る通しのテストは CI の使い捨ての DB で確かめる
+- 開発用の DB には、ユーザーの依頼で確認用の持ち主 `owner@example.com` を作った（パスワードは Git に書かない。ユーザーに伝え済み）。アカウントは1つだけなので、`app:create-owner` は断られる
 - `claude-security` のスキャンには Workflow ツールが要る。使えないセッションでは `security-review` で見直す
 
 ## 次にやること
@@ -69,4 +69,5 @@
 
 ## 構築の前に確かめること
 
+- `proxy.ts` はログイン中の応答にもセッションのクッキーを付ける。CloudFront が HTML を保存すると他人に配られるので、`/_next/static/*` 以外を保存しない設定（AWS 構成設計書 5.1）になっているかを確かめる
 - 前のアプリ（beginner_version）で、作業用の IAM ユーザーが組織の制限（SCP）で EC2 などを拒否されていた。同じ AWS アカウントを使うなら、解決しているかを確かめる

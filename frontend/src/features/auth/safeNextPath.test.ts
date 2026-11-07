@@ -20,6 +20,12 @@ it.each([
   ["\\\\evil.example"],
   ["/\t/evil.example"],
   ["/\n/evil.example"],
+  // 整えると「//evil.example」になる形
+  ["/.//evil.example"],
+  ["/..//evil.example"],
+  ["/x/..//evil.example"],
+  ["/%2e//evil.example"],
+  ["/./\\evil.example"],
   ["javascript:alert(1)"],
   ["recipes/1"],
   ["/login"],

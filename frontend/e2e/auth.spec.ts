@@ -78,13 +78,17 @@ test("空のまま送ると、項目のすぐ下に日本語で出す", async ({
   await expect(page.getByText("パスワードを入力してください")).toBeVisible();
 });
 
-test("戻り先に外のサイトを指定されても、外へ移らない", async ({ page }) => {
-  await page.goto("/login?next=https://evil.example/");
+for (const next of ["https://evil.example/", "/.//evil.example"]) {
+  test(`戻り先に外のサイトを指定されても、外へ移らない：${next}`, async ({
+    page,
+  }) => {
+    await page.goto(`/login?next=${encodeURIComponent(next)}`);
 
-  await submitLogin(page, OWNER.email, OWNER.password);
+    await submitLogin(page, OWNER.email, OWNER.password);
 
-  await expect(page).toHaveURL("/");
-});
+    await expect(page).toHaveURL("/");
+  });
+}
 
 test("ログインしていないと、API は 401 を返す", async ({ request }) => {
   const response = await request.get("/api/me", {
